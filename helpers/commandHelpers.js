@@ -39,8 +39,7 @@ export async function safelyCreateKubeNamespace(namespaceName) {
   await executeCommand(`kubectl create ns ${namespaceName} --dry-run -o yaml | kubectl apply -f -`);
 }
 
-export async function getKubernetesJson(command, cliOptions) {
-
+function buildKubernetesCommand(command, cliOptions){
   // Build up a field selector string based on namespaces to ignore
   if (cliOptions && cliOptions.ignoreNamespaces) {
 
@@ -63,47 +62,34 @@ export async function getKubernetesJson(command, cliOptions) {
     command = `${command} ${fieldSelector}`;
   }
 
+  return command;
+}
+
+export async function getKubernetesJson(command, cliOptions) {
+
+  var newCommand = buildKubernetesCommand(command, cliOptions);  
+
   // Execute the command as json
-  command = `${command} -o json`;
-  var results = await executeCommand(command);
+  var results = await executeCommand(`${newCommand} -o json`);
 
   // Parse results and return
   return JSON.parse(results.stdout);
 }
 
-export async function doesResourceExist(command, cliOptions) {
+export async function doesResourceExist(resourceName, cliOptions) {
 
   var getKubernetesText = async (command, cliOptions) => {
-    // Build up a field selector string based on namespaces to ignore
-    if (cliOptions && cliOptions.ignoreNamespaces) {
+    
+    var newCommand = buildKubernetesCommand(command, cliOptions); 
 
-      var fields = '';
-      var namespacesArr = cliOptions.ignoreNamespaces.split(',');
-
-      // Build up fields for field selector
-      for (const index in namespacesArr) {
-        if (command.match(/get ns/i))
-          fields += `metadata.name!=${namespacesArr[index]},`;
-        else
-          fields += `metadata.namespace!=${namespacesArr[index]},`;
-      }
-
-      // Remove trailing comma
-      fields = fields.replace(/,\s*$/, "");
-
-      // Construct field selector and inject into command
-      var fieldSelector = `--field-selector ${fields}`;
-      command = `${command} ${fieldSelector}`;
-    }
-
-    var results = await executeCommand(command);
+    var results = await executeCommand(newCommand);
 
     // Parse results and return
     return results.stdout;
   }
 
   try {
-    var result = await getKubernetesText("kubectl api-resources | awk -F ' ' '{ print $1 }' | grep 'constrainttemplates'");
+    var result = await getKubernetesText(`kubectl api-resources | awk -F ' ' '{ print $1 }' | grep '${resourceName}'`, cliOptions);
   }
   catch {
     return result? true: false;
