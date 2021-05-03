@@ -72,7 +72,7 @@ async function main(options) {
   console.log(chalk.blue("Fetching all Horizontal Pod AutoScalers..."));
   var autoScalers = await getKubernetesJson('kubectl get hpa --all-namespaces', options);
 
-  // Fetch all the constraint templates
+  // Fetch all the constraint templates (Open Policy Agent)
   console.log(chalk.blue("Fetching all Constraint Templates..."));
   var constraintTemplates = await getKubernetesJson('kubectl get constrainttemplate');
 
