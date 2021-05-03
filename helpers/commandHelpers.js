@@ -71,45 +71,15 @@ export async function getKubernetesJson(command, cliOptions) {
   return JSON.parse(results.stdout);
 }
 
-export async function doesResourceExist(command, cliOptions) {
-
-  var getKubernetesText = async (command, cliOptions) => {
-    // Build up a field selector string based on namespaces to ignore
-    if (cliOptions && cliOptions.ignoreNamespaces) {
-
-      var fields = '';
-      var namespacesArr = cliOptions.ignoreNamespaces.split(',');
-
-      // Build up fields for field selector
-      for (const index in namespacesArr) {
-        if (command.match(/get ns/i))
-          fields += `metadata.name!=${namespacesArr[index]},`;
-        else
-          fields += `metadata.namespace!=${namespacesArr[index]},`;
-      }
-
-      // Remove trailing comma
-      fields = fields.replace(/,\s*$/, "");
-
-      // Construct field selector and inject into command
-      var fieldSelector = `--field-selector ${fields}`;
-      command = `${command} ${fieldSelector}`;
-    }
-
-    var results = await executeCommand(command);
-
-    // Parse results and return
-    return results.stdout;
-  }
-
+export async function doesResourceExist(resourceName) {
+  
   try {
-    var result = await getKubernetesText("kubectl api-resources | awk -F ' ' '{ print $1 }' | grep 'constrainttemplates'");
-  }
-  catch {
+    var result = await executeCommand(`kubectl api-resources | awk -F ' ' '{ print $1 }' | grep '${resourceName}'`);
+
     return result? true: false;
   }
-  finally {
+  catch {
     return false;
-  }  
+  }
 }
 
