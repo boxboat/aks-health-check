@@ -39,6 +39,9 @@ export async function safelyCreateKubeNamespace(namespaceName) {
   await executeCommand(`kubectl create ns ${namespaceName} --dry-run -o yaml | kubectl apply -f -`);
 }
 
+//
+// Run a Kubernetes command with some CLI options
+//
 export async function getKubernetesJson(command, cliOptions) {
 
   // Build up a field selector string based on namespaces to ignore
@@ -71,12 +74,15 @@ export async function getKubernetesJson(command, cliOptions) {
   return JSON.parse(results.stdout);
 }
 
+//
+// Check that a Kubernetes resource exists since `api-resources -o json` does not exist.
+//
 export async function doesResourceExist(resourceName) {
   
   try {
     var result = await executeCommand(`kubectl api-resources | awk -F ' ' '{ print $1 }' | grep '${resourceName}'`);
 
-    return result? true: false;
+    return result?.stdout? true: false;
   }
   catch {
     return false;
