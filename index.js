@@ -3,7 +3,7 @@
 //
 // Imports
 //
-import { executeCommand, getKubernetesJson } from './helpers/commandHelpers.js'
+import { executeCommand, getKubernetesJson, doesResourceExist } from './helpers/commandHelpers.js'
 import { Command } from "commander"
 import chalk from "chalk"
 import * as Development from './modules/development.js';
@@ -72,9 +72,13 @@ async function main(options) {
   console.log(chalk.blue("Fetching all Horizontal Pod AutoScalers..."));
   var autoScalers = await getKubernetesJson('kubectl get hpa --all-namespaces', options);
 
-  // Fetch all the constraint templates (Open Policy Agent)
-  console.log(chalk.blue("Fetching all Constraint Templates..."));
-  var constraintTemplates = await getKubernetesJson('kubectl get constrainttemplate');
+  var hasConstraintTemplates = await doesResourceExist("constrainttemplates");
+  var constraintTemplates = null;
+  if (hasConstraintTemplates){
+    // Fetch all the constraint templates (Open Policy Agent)
+    console.log(chalk.blue("Fetching all Constraint Templates..."));
+    constraintTemplates = await getKubernetesJson('kubectl get constrainttemplate');
+  }  
 
   // Check development items
   console.log();
@@ -95,8 +99,10 @@ async function main(options) {
   // Check image management items
   console.log();
   console.log(chalk.bgWhite(chalk.black('               Scanning Image Management Items               ')));
-  await ImageManagement.checkForAllowedImages(constraintTemplates);
-  await ImageManagement.checkForNoPrivilegedContainers(constraintTemplates);
+  if (hasConstraintTemplates){
+    await ImageManagement.checkForAllowedImages(constraintTemplates);
+    await ImageManagement.checkForNoPrivilegedContainers(constraintTemplates);
+  }  
   await ImageManagement.checkForAksAcrRbacIntegration(clusterDetails, containerRegistries);
   await ImageManagement.checkForPrivateEndpointsOnRegistries(containerRegistries);
 }
