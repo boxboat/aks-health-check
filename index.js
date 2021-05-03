@@ -98,6 +98,7 @@ async function main(options) {
   await ImageManagement.checkForAllowedImages(constraintTemplates);
   await ImageManagement.checkForNoPrivilegedContainers(constraintTemplates);
   await ImageManagement.checkForAksAcrRbacIntegration(clusterDetails, containerRegistries);
+  await ImageManagement.checkForPrivateEndpointsOnRegistries(containerRegistries);
 }
 
 //

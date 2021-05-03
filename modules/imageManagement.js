@@ -71,3 +71,22 @@ export async function checkForAksAcrRbacIntegration(clusterDetails, containerReg
     console.log(chalk.green("--- All registries have AKS/ACR RBAC integration"));
   }
 }
+
+//
+// Checks that private endpoints are enabled for container registries
+//
+export async function checkForPrivateEndpointsOnRegistries(containerRegistries) {
+
+  console.log(chalk.white("Checking for private endpoints on container registries..."));
+
+  // Grab all registries without private endpoints
+  var problemRegistries = containerRegistries
+    .filter(x => x.privateEndpointConnections.length == 0);
+
+  // Log output
+  if (problemRegistries.length) {
+    console.log(chalk.red(`--- ${problemRegistries.length} registries did not have private endpoints configured`));
+  } else {
+    console.log(chalk.green("--- All registries have private endpoints configured"));
+  }
+}
