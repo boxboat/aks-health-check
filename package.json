@@ -1,0 +1,20 @@
+{
+  "name": "boxboat-aks-healthcheck",
+  "version": "1.0.0",
+  "description": "Healthchecks an AKS cluster using BoxBoat best practices",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "bin": {
+    "boxboat-aks-healthcheck": "./index.js"
+  },
+  "author": "BoxBoat",
+  "license": "ISC",
+  "dependencies": {
+    "chalk": "^4.1.0",
+    "commander": "^7.2.0"
+  }
+}
