@@ -8,6 +8,7 @@ import { Command } from "commander"
 import chalk from "chalk"
 import * as Development from './modules/development.js';
 import * as ImageManagement from './modules/imageManagement.js';
+import * as ClusterSetup from './modules/clusterSetup.js';
 import { equalsIgnoreCase } from './helpers/stringCompare.js';
 
 //
@@ -106,6 +107,11 @@ async function main(options) {
   await ImageManagement.checkForAksAcrRbacIntegration(clusterDetails, containerRegistries);
   await ImageManagement.checkForPrivateEndpointsOnRegistries(containerRegistries);
   await ImageManagement.checkForRuntimeContainerSecurity(pods);
+
+  // Check cluster setup items
+  console.log();
+  console.log(chalk.bgWhite(chalk.black('               Scanning Cluster Setup Items               ')));
+  await ClusterSetup.checkForAuthorizedIpRanges(clusterDetails);
 }
 
 //
