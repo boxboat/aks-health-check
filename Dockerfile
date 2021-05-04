@@ -10,6 +10,7 @@ RUN npm install
 
 COPY . .
 RUN npm install -g
+RUN npm link
 
 # Create a group and user
 RUN addgroup -S boxboat && adduser -S boxboat -G boxboat
