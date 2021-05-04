@@ -105,6 +105,7 @@ async function main(options) {
   }  
   await ImageManagement.checkForAksAcrRbacIntegration(clusterDetails, containerRegistries);
   await ImageManagement.checkForPrivateEndpointsOnRegistries(containerRegistries);
+  await ImageManagement.checkForRuntimeContainerSecurity(pods);
 }
 
 //
