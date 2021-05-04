@@ -90,3 +90,38 @@ export async function checkForPrivateEndpointsOnRegistries(containerRegistries) 
     console.log(chalk.green("--- All registries have private endpoints configured"));
   }
 }
+
+//
+// Checks for known runtime container security tools
+//
+export async function checkForRuntimeContainerSecurity(pods) {
+
+  console.log(chalk.white("Checking for runtime container security tools..."));
+
+  // Determine if Aqua (kube-enforcer) is installed
+  var aquaInstalled = pods
+    .items
+    .some(pod => pod.spec.containers.some(con => equalsIgnoreCase(con.name, "kube-enforcer")));
+
+  // Determine if Anchore is installed
+  var anchoreInstalled = pods
+    .items
+    .some(pod => pod.spec.containers.some(con => con.image.match(/anchore-engine/i)));
+
+  // Determine if Palo-Alto is installed
+  var paloAltoInstalled = pods
+    .items
+    .some(pod => pod.spec.containers.some(con => con.image.match(/twistlock/i)));
+
+  // If none of the known tools are installed, log an error
+  // Otherwise log the tool that was found
+  var knownToolInstalled = aquaInstalled || anchoreInstalled || paloAltoInstalled;
+  if (!knownToolInstalled) {
+    console.log(chalk.red(`--- A runtime container security tool was not found`));
+  }
+  else {
+    if (aquaInstalled) console.log(chalk.green(`--- Aqua Kube-Enforcer was found`));
+    if (anchoreInstalled) console.log(chalk.green(`--- Anchore Engine was found`));
+    if (paloAltoInstalled) console.log(chalk.green(`--- Palo Alto Twistlock was found`));
+  }
+}
