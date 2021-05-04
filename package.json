@@ -9,7 +9,7 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "bin": {
-    "boxboat-aks-healthcheck": "./index.js"
+    "aks-hc": "./index.js"
   },
   "author": "BoxBoat",
   "license": "ISC",
