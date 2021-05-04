@@ -112,6 +112,10 @@ async function main(options) {
   console.log();
   console.log(chalk.bgWhite(chalk.black('               Scanning Cluster Setup Items               ')));
   await ClusterSetup.checkForAuthorizedIpRanges(clusterDetails);
+  await ClusterSetup.checkForManagedAadIntegration(clusterDetails);
+  await ClusterSetup.checkForAutoscale(clusterDetails);
+  await ClusterSetup.checkForKubernetesDashboard(pods);
+  await ClusterSetup.checkForMultipleNodePools(clusterDetails);
 }
 
 //
