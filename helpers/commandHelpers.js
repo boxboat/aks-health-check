@@ -82,7 +82,7 @@ export async function doesResourceExist(resourceName) {
   try {
     var result = await executeCommand(`kubectl api-resources | awk -F ' ' '{ print $1 }' | grep '${resourceName}'`);
 
-    return result?.stdout? true: false;
+    return result.stdout? true: false;
   }
   catch {
     return false;
