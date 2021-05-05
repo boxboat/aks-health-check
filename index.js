@@ -118,7 +118,7 @@ async function main(options) {
   await ClusterSetup.checkForKubernetesDashboard(pods);
   await ClusterSetup.checkForMultipleNodePools(clusterDetails);
 
-  // Check cluster setup items
+  // Check disaster recovery items
   console.log();
   console.log(chalk.bgWhite(chalk.black('               Scanning Disaster Recovery Items               ')));
   await DisasterRecovery.checkForAvailabilityZones(clusterDetails);
