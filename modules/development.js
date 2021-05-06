@@ -3,7 +3,7 @@ import chalk from "chalk"
 //
 // Checks for any pods without liveness probes
 //
-export async function checkForLivenessProbes(pods) {
+export function checkForLivenessProbes(pods) {
 
   console.log(chalk.white("Checking for liveness probes..."));
 
@@ -24,7 +24,7 @@ export async function checkForLivenessProbes(pods) {
 //
 // Checks for any pods without readiness probes
 //
-export async function checkForReadinessProbes(pods) {
+export function checkForReadinessProbes(pods) {
 
   console.log(chalk.white("Checking for readiness probes..."));
 
@@ -45,7 +45,7 @@ export async function checkForReadinessProbes(pods) {
 //
 // Checks for any pods without startup probes
 //
-export async function checkForStartupProbes(pods) {
+export function checkForStartupProbes(pods) {
 
   console.log(chalk.white("Checking for startup probes..."));
 
@@ -66,7 +66,7 @@ export async function checkForStartupProbes(pods) {
 //
 // Checks for any pods without pre-stop hooks
 //
-export async function checkForPreStopHooks(pods) {
+export function checkForPreStopHooks(pods) {
 
   console.log(chalk.white("Checking for preStop hooks..."));
 
@@ -87,7 +87,7 @@ export async function checkForPreStopHooks(pods) {
 //
 // Checks for any deployments with a single replica
 //
-export async function checkForSingleReplicas(deployments) {
+export function checkForSingleReplicas(deployments) {
 
   console.log(chalk.white("Checking for single replica deployments..."));
 
@@ -108,7 +108,7 @@ export async function checkForSingleReplicas(deployments) {
 //
 // Checks for any resources without labels or annotations
 //
-export async function checkForTags(resources) {
+export function checkForTags(resources) {
 
   console.log(chalk.white("Checking for resources without labels or annotations..."));
 
@@ -135,7 +135,7 @@ export async function checkForTags(resources) {
 //
 // Checks for namespaces without any Horizontal Pod Autoscalers
 //
-export async function checkForHorizontalPodAutoscalers(namespaces, autoScalers) {
+export function checkForHorizontalPodAutoscalers(namespaces, autoScalers) {
 
   console.log(chalk.white("Checking for namespaces without Horizontal Pod Autoscalers..."));
 
@@ -157,7 +157,7 @@ export async function checkForHorizontalPodAutoscalers(namespaces, autoScalers) 
 //
 // Checks for the existence of an azure secrets store provider pod in the cluster
 //
-export async function checkForAzureSecretsStoreProvider(pods) {
+export function checkForAzureSecretsStoreProvider(pods) {
 
   console.log(chalk.white("Checking for Azure secrets store provider..."));
 
@@ -182,7 +182,7 @@ export async function checkForAzureSecretsStoreProvider(pods) {
 //
 // Checks if Azure Managed Identity is configured for pods
 //
-export async function checkForAzureManagedPodIdentity(clusterDetails) {
+export function checkForAzureManagedPodIdentity(clusterDetails) {
 
   console.log(chalk.white("Checking for Azure Managed Identity for pods..."));
 
@@ -201,7 +201,7 @@ export async function checkForAzureManagedPodIdentity(clusterDetails) {
 //
 // Checks if any pods are running in the default namespace
 //
-export async function checkForPodsInDefaultNamespace(pods) {
+export function checkForPodsInDefaultNamespace(pods) {
 
   console.log(chalk.white("Checking for pods in default namespace..."));
 
@@ -221,7 +221,7 @@ export async function checkForPodsInDefaultNamespace(pods) {
 //
 // Checks if any pods do not have requests or limits defined
 //
-export async function checkForPodsWithoutRequestsOrLimits(pods) {
+export function checkForPodsWithoutRequestsOrLimits(pods) {
 
   console.log(chalk.white("Checking for pods without resource requests/limits..."));
 
@@ -242,7 +242,7 @@ export async function checkForPodsWithoutRequestsOrLimits(pods) {
 //
 // Checks if any pods do not have requests or limits defined
 //
-export async function checkForPodsWithDefaultSecurityContext(pods) {
+export function checkForPodsWithDefaultSecurityContext(pods) {
 
   console.log(chalk.white("Checking for pods with default security context..."));
 

@@ -85,45 +85,45 @@ async function main(options) {
   // Check development items
   console.log();
   console.log(chalk.bgWhite(chalk.black('               Scanning Development Items               ')));
-  await Development.checkForLivenessProbes(pods);
-  await Development.checkForReadinessProbes(pods);
-  await Development.checkForStartupProbes(pods);
-  await Development.checkForPreStopHooks(pods);
-  await Development.checkForSingleReplicas(deployments);
-  await Development.checkForTags([namespaces.items, pods.items, deployments.items, services.items, configMaps.items, secrets.items]);
-  await Development.checkForHorizontalPodAutoscalers(namespaces, autoScalers);
-  await Development.checkForAzureSecretsStoreProvider(pods);
-  await Development.checkForAzureManagedPodIdentity(clusterDetails);
-  await Development.checkForPodsInDefaultNamespace(pods);
-  await Development.checkForPodsWithoutRequestsOrLimits(pods);
-  await Development.checkForPodsWithDefaultSecurityContext(pods);
+  Development.checkForLivenessProbes(pods);
+  Development.checkForReadinessProbes(pods);
+  Development.checkForStartupProbes(pods);
+  Development.checkForPreStopHooks(pods);
+  Development.checkForSingleReplicas(deployments);
+  Development.checkForTags([namespaces.items, pods.items, deployments.items, services.items, configMaps.items, secrets.items]);
+  Development.checkForHorizontalPodAutoscalers(namespaces, autoScalers);
+  Development.checkForAzureSecretsStoreProvider(pods);
+  Development.checkForAzureManagedPodIdentity(clusterDetails);
+  Development.checkForPodsInDefaultNamespace(pods);
+  Development.checkForPodsWithoutRequestsOrLimits(pods);
+  Development.checkForPodsWithDefaultSecurityContext(pods);
 
   // Check image management items
   console.log();
   console.log(chalk.bgWhite(chalk.black('               Scanning Image Management Items               ')));
   if (hasConstraintTemplates){
-    await ImageManagement.checkForAllowedImages(constraintTemplates);
-    await ImageManagement.checkForNoPrivilegedContainers(constraintTemplates);
+    ImageManagement.checkForAllowedImages(constraintTemplates);
+    ImageManagement.checkForNoPrivilegedContainers(constraintTemplates);
   }  
   await ImageManagement.checkForAksAcrRbacIntegration(clusterDetails, containerRegistries);
-  await ImageManagement.checkForPrivateEndpointsOnRegistries(containerRegistries);
-  await ImageManagement.checkForRuntimeContainerSecurity(pods);
+  ImageManagement.checkForPrivateEndpointsOnRegistries(containerRegistries);
+  ImageManagement.checkForRuntimeContainerSecurity(pods);
 
   // Check cluster setup items
   console.log();
   console.log(chalk.bgWhite(chalk.black('               Scanning Cluster Setup Items               ')));
-  await ClusterSetup.checkForAuthorizedIpRanges(clusterDetails);
-  await ClusterSetup.checkForManagedAadIntegration(clusterDetails);
-  await ClusterSetup.checkForAutoscale(clusterDetails);
-  await ClusterSetup.checkForKubernetesDashboard(pods);
-  await ClusterSetup.checkForMultipleNodePools(clusterDetails);
+  ClusterSetup.checkForAuthorizedIpRanges(clusterDetails);
+  ClusterSetup.checkForManagedAadIntegration(clusterDetails);
+  ClusterSetup.checkForAutoscale(clusterDetails);
+  ClusterSetup.checkForKubernetesDashboard(pods);
+  ClusterSetup.checkForMultipleNodePools(clusterDetails);
 
   // Check disaster recovery items
   console.log();
   console.log(chalk.bgWhite(chalk.black('               Scanning Disaster Recovery Items               ')));
-  await DisasterRecovery.checkForAvailabilityZones(clusterDetails);
-  await DisasterRecovery.checkForControlPlaneSla(clusterDetails);
-  await DisasterRecovery.checkForVelero(pods);
+  DisasterRecovery.checkForAvailabilityZones(clusterDetails);
+  DisasterRecovery.checkForControlPlaneSla(clusterDetails);
+  DisasterRecovery.checkForVelero(pods);
 }
 
 //

@@ -5,7 +5,7 @@ import { executeCommand } from '../helpers/commandHelpers.js';
 //
 // Checks for the 'only use allowed images' policy
 //
-export async function checkForAllowedImages(constraintTemplates) {
+export function checkForAllowedImages(constraintTemplates) {
 
   console.log(chalk.white("Checking for 'Only use allowed images' policy..."));
 
@@ -25,7 +25,7 @@ export async function checkForAllowedImages(constraintTemplates) {
 //
 // Checks for 'no privileged containers' policy
 //
-export async function checkForNoPrivilegedContainers(constraintTemplates) {
+export function checkForNoPrivilegedContainers(constraintTemplates) {
 
   console.log(chalk.white("Checking for 'No privileged containers' policy..."));
 
@@ -75,7 +75,7 @@ export async function checkForAksAcrRbacIntegration(clusterDetails, containerReg
 //
 // Checks that private endpoints are enabled for container registries
 //
-export async function checkForPrivateEndpointsOnRegistries(containerRegistries) {
+export function checkForPrivateEndpointsOnRegistries(containerRegistries) {
 
   console.log(chalk.white("Checking for private endpoints on container registries..."));
 
@@ -94,7 +94,7 @@ export async function checkForPrivateEndpointsOnRegistries(containerRegistries) 
 //
 // Checks for known runtime container security tools
 //
-export async function checkForRuntimeContainerSecurity(pods) {
+export function checkForRuntimeContainerSecurity(pods) {
 
   console.log(chalk.white("Checking for runtime container security tools..."));
 

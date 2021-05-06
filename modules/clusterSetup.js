@@ -4,7 +4,7 @@ import { equalsIgnoreCase } from '../helpers/stringCompare.js';
 //
 // Checks if the cluster master has authorized ip ranges set
 //
-export async function checkForAuthorizedIpRanges(clusterDetails) {
+export function checkForAuthorizedIpRanges(clusterDetails) {
 
   console.log(chalk.white("Checking for authorized ip ranges..."));
 
@@ -24,7 +24,7 @@ export async function checkForAuthorizedIpRanges(clusterDetails) {
 //
 // Checks if the cluster has Managed Azure Active Directory integration enabled
 //
-export async function checkForManagedAadIntegration(clusterDetails) {
+export function checkForManagedAadIntegration(clusterDetails) {
 
   console.log(chalk.white("Checking for Managed Azure Active Directory integration..."));
 
@@ -42,7 +42,7 @@ export async function checkForManagedAadIntegration(clusterDetails) {
 //
 // Checks if autoscale is enabled on node pools
 //
-export async function checkForAutoscale(clusterDetails) {
+export function checkForAutoscale(clusterDetails) {
 
   console.log(chalk.white("Checking for Autoscale on cluster..."));
 
@@ -60,7 +60,7 @@ export async function checkForAutoscale(clusterDetails) {
 //
 // Checks for the Kubernetes dashboard
 //
-export async function checkForKubernetesDashboard(pods) {
+export function checkForKubernetesDashboard(pods) {
 
   console.log(chalk.white("Checking for Kubernetes dashboard..."));
 
@@ -80,7 +80,7 @@ export async function checkForKubernetesDashboard(pods) {
 //
 // Check if a cluster has multiple node pools
 //
-export async function checkForMultipleNodePools(clusterDetails) {
+export function checkForMultipleNodePools(clusterDetails) {
 
   console.log(chalk.white("Checking for multiple node pools on cluster..."));
 
