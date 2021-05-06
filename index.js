@@ -9,6 +9,7 @@ import chalk from "chalk"
 import * as Development from './modules/development.js';
 import * as ImageManagement from './modules/imageManagement.js';
 import * as ClusterSetup from './modules/clusterSetup.js';
+import * as DisasterRecovery from './modules/disasterRecovery.js';
 import { equalsIgnoreCase } from './helpers/stringCompare.js';
 
 //
@@ -116,6 +117,13 @@ async function main(options) {
   await ClusterSetup.checkForAutoscale(clusterDetails);
   await ClusterSetup.checkForKubernetesDashboard(pods);
   await ClusterSetup.checkForMultipleNodePools(clusterDetails);
+
+  // Check disaster recovery items
+  console.log();
+  console.log(chalk.bgWhite(chalk.black('               Scanning Disaster Recovery Items               ')));
+  await DisasterRecovery.checkForAvailabilityZones(clusterDetails);
+  await DisasterRecovery.checkForControlPlaneSla(clusterDetails);
+  await DisasterRecovery.checkForVelero(pods);
 }
 
 //
