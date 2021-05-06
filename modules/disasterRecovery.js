@@ -4,7 +4,7 @@ import { equalsIgnoreCase } from '../helpers/stringCompare.js';
 //
 // Checks if the cluster has agent pools without multiple availability zones
 //
-export async function checkForAvailabilityZones(clusterDetails) {
+export function checkForAvailabilityZones(clusterDetails) {
 
   console.log(chalk.white("Checking for agent pools without multiple availability zones..."));
 
@@ -24,7 +24,7 @@ export async function checkForAvailabilityZones(clusterDetails) {
 //
 // Checks if the control plane is configured for an SLA
 //
-export async function checkForControlPlaneSla(clusterDetails) {
+export function checkForControlPlaneSla(clusterDetails) {
 
   console.log(chalk.white("Checking for SLA for control plane..."));
 
@@ -42,7 +42,7 @@ export async function checkForControlPlaneSla(clusterDetails) {
 //
 // Checks if Velero is installed in the cluster
 //
-export async function checkForVelero(pods) {
+export function checkForVelero(pods) {
 
   console.log(chalk.white("Checking for Velero..."));
 
