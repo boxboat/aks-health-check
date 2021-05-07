@@ -117,6 +117,7 @@ async function main(options) {
   ClusterSetup.checkForAutoscale(clusterDetails);
   ClusterSetup.checkForKubernetesDashboard(pods);
   ClusterSetup.checkForMultipleNodePools(clusterDetails);
+  ClusterSetup.checkForServiceMesh(deployments, pods);
 
   // Check disaster recovery items
   console.log();
