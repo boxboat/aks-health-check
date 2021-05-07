@@ -186,12 +186,12 @@ export function checkForAzureManagedPodIdentity(clusterDetails) {
 
   console.log(chalk.white("Checking for Azure Managed Identity for pods..."));
 
-  // Determine if managed identity is configured
-  var aadProfile = clusterDetails.aadProfile;
-  var managedIdentityConfigured = aadProfile && (aadProfile.clientAppId || aadProfile.managed);
+  // Determine if managed identity for pods is enabled
+  var podIdentityProfile = clusterDetails.podIdentityProfile;
+  var managedPodIdentityEnabled = podIdentityProfile && podIdentityProfile.enabled;
 
   // Log output
-  if (!managedIdentityConfigured) {
+  if (!managedPodIdentityEnabled) {
     console.log(chalk.red('--- Azure Managed Identity for pods is not enabled'));
   } else {
     console.log(chalk.green('--- Azure Managed Identity for pods is enabled'));
