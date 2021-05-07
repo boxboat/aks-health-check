@@ -14,7 +14,7 @@ const timeout = (prom, time, error) =>
 //
 export function executeCommand(command, timeoutInMs) {
   var commandPromise = new Promise((done, reject) => {
-    exec(command, (err, stdout, stderr) => {
+    exec(command, {maxBuffer: 1024 * 1024 * 10}, (err, stdout, stderr) => {
 
       if (err)
         reject(err);
