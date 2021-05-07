@@ -94,3 +94,50 @@ export function checkForMultipleNodePools(clusterDetails) {
     console.log(chalk.green("--- Multiple node pools exist on the cluster"));
   }
 }
+
+//
+// Checks for the existence of the most popular service meshes
+//
+export function checkForServiceMesh(deployments, pods) {
+
+  console.log(chalk.white("Checking for known service meshes..."));
+
+  // Determine if Traefik-mesh is installed
+  var traefikMeshInstalled = deployments
+    .items
+    .some(x => x.metadata.name.match(/traefik-mesh/i));
+
+  // Determine if Istio is installed
+  var istioInstalled = pods
+    .items
+    .some(pod => pod.spec.containers.some(con => con.image.match(/istio/i)));
+
+  // Determine if Consul is installed
+  var consulInstalled = pods
+    .items
+    .some(pod => pod.spec.containers.some(con => con.image.match(/consul/i)));
+
+  // Determine if Linkerd is installed
+  var linkerdInstalled = deployments
+    .items
+    .some(x => x.metadata.name.match(/linkerd/i));
+
+  // Determine if OSM is installed
+  var osmInstalled = pods
+    .items
+    .some(pod => pod.spec.containers.some(con => con.image.match(/osm-controller/i)));
+
+  // If none of the known meshes are installed, log an error
+  // Otherwise log the mesh that was found
+  var knownMeshInstalled = traefikMeshInstalled || istioInstalled || consulInstalled || linkerdInstalled || osmInstalled;
+  if (!knownMeshInstalled) {
+    console.log(chalk.red(`--- A service mesh was not detected`));
+  }
+  else {
+    if (traefikMeshInstalled) console.log(chalk.green(`--- Traefik-Mesh was found`));
+    if (istioInstalled) console.log(chalk.green(`--- Istio was found`));
+    if (consulInstalled) console.log(chalk.green(`--- Consul was found`));
+    if (linkerdInstalled) console.log(chalk.green(`--- Linkerd was found`));
+    if (osmInstalled) console.log(chalk.green(`--- Open Service Mesh was found`));
+  }
+}
