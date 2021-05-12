@@ -13,8 +13,14 @@ then
     exit 1
 fi
 
+if [ -z "$OUTPUT_FILE_NAME" ]
+then
+    echo "Please provide the output file name through an environment variable 'OUTPUT_FILE_NAME'."
+    exit 1
+fi 
+
 echo "Attempting Login."
 az login --identity --verbose 
 
 echo "Logged in. Starting health check."
-aks-hc -n $CLUSTER_NAME -g $RESOURCE_GROUP
+aks-hc -n $CLUSTER_NAME -g $RESOURCE_GROUP | tee $OUTPUT_FILE_NAME
