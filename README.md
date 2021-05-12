@@ -72,11 +72,23 @@ docker run -v $SERVICE_PRINCIPAL_CERT_PATH:/cert/az.pem -it --rm aks-health-chec
 ```
 az group create -n rg-akshc-dev -l eastus --tag customer=Internal owner=Facundo
 
-MANAGED_IDENTITY_CLIENT_ID=$(az identity create -n identity-aks-health-check -g rg-akshc-dev -l eastus | jq -r '.clientId')
+MANAGED_IDENTITY_CLIENT_ID=$(az identity create -n identity-aks-health-check -g rg-akshc-dev -l eastus | jq -r '.id')
 
 az role assignment create --role Contributor --assignee $MANAGED_IDENTITY_CLIENT_ID
 
-az container create --resource-group rg-boxup-test-001 -l eastus -n aks-health-check --image boxboatregistry.azurecr.io/aks-health-check:pre-1.0.0 --assign-identity 
+export STORAGE_ACCOUNT="stbbakshclogs"
+export FILESHARE_NAME="logs"
+export RESOURCE_GROUP="rg-akshc-dev"
+
+az storage account create -n $STORAGE_ACCOUNT -g $RESOURCE_GROUP
+
+STORAGE_ACCOUNT_KEY=$(az storage account keys list -n $STORAGE_ACCOUNT -g $RESOURCE_GROUP | jq -r ".[0].value")
+
+az storage share create --account-name $STORAGE_ACCOUNT --account-key $STORAGE_ACCOUNT_KEY -n $FILESHARE_NAME
+
+az container create --resource-group rg-boxup-test-001 -l eastus -n aks-health-check \
+OUTPUT_FILE_NAME=/var/logs/akshc/log$(date +%s).txt --image boxboatregistry.azurecr.io/aks-health-check:pre-1.0.0 --assign-identity 
+--azure-file-volume-share-name $FILESHARE_NAME --azure-file-volume-account-name $STORAGE_ACCOUNT --azure-file-volume-account-key $STORAGE_ACCOUNT_KEY --azure-file-volume-mount-path /var/logs/akshc
 ```
 
 
