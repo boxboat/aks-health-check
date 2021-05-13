@@ -123,34 +123,32 @@ async function main(options) {
   DisasterRecovery.checkForVelero(pods);
 }
 
-//
-// Entrypoint
-//
-(async () => {
-  try {
+// Build up the program
+const program = new Command();
+program
+  .name('boxboat-aks-healthcheck')
+  .description('Health checks an AKS cluster using BoxBoat best practices');
+  
+const check = program.command('check');
+check
+  .command('azure')
+  .action(() => {
+    console.log('TODO checking azure');
+  });
 
-    // Build up the program
-    const program = new Command();
-    program
-      .name('boxboat-aks-healthcheck')
-      .description('Healthchecks an AKS cluster using BoxBoat best practices')
-      .requiredOption('-g, --resource-group <group>', 'Resource group of AKS cluster')
-      .requiredOption('-n, --name <name>', 'Name of AKS cluster')
-      .option('-r, --image-registries <registries>', 'A comma-separated list of Azure Container Registry names used with the cluster')
-      .option('-i, --ignore-namespaces <namespaces>', 'A comma-separated list of namespaces to ignore when doing analysis');
+check
+  .command('kubernetes')
+  .action(() => {
+    console.log('TODO checking kubernetes');
+  });
 
-    // Parse command
-    program.parse();
+check
+  .command('all')
+  .requiredOption('-g, --resource-group <group>', 'Resource group of AKS cluster')
+  .requiredOption('-n, --name <name>', 'Name of AKS cluster')
+  .option('-r, --image-registries <registries>', 'A comma-separated list of Azure Container Registry names used with the cluster')
+  .option('-i, --ignore-namespaces <namespaces>', 'A comma-separated list of namespaces to ignore when doing analysis')
+  .action(main);
 
-    // Execute main
-    const opts = program.opts();
-    await main(opts);
-
-    // If we make it here, main has completed
-    // exit the process to stop any promises that are waiting to timeout
-    process.exit(0);
-  } catch (e) {
-    console.log(chalk.red(`An unexpected error occurred: ${e}`));
-    process.exit(1);
-  }
-})();
+// Parse command
+program.parse(process.argv);
