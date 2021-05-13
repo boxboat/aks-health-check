@@ -1,5 +1,7 @@
 import chalk from "chalk"
 import { equalsIgnoreCase } from '../helpers/stringCompare.js';
+import { ResultStatus } from '../helpers/commandStatus.js';
+import { Severity } from '../helpers/commandSeverity.js';
 
 //
 // Checks if the cluster has agent pools without multiple availability zones
@@ -19,6 +21,12 @@ export function checkForAvailabilityZones(clusterDetails) {
   } else {
     console.log(chalk.green("--- All agent pools have multiple availability zones"));
   }
+
+  return {
+    checkId: 'DR-1',
+    status: !agentPoolsWithNoAzs.length? ResultStatus.Pass: ResultStatus.Fail,
+    severity: Severity.High
+  }
 }
 
 //
@@ -36,6 +44,12 @@ export function checkForControlPlaneSla(clusterDetails) {
     console.log(chalk.red(`--- An SLA has not been configured for the control plane`));
   } else {
     console.log(chalk.green("--- An SLA has been configured for the control plane"));
+  }
+
+  return {
+    checkId: 'DR-2',
+    status: slaConfigured.length? ResultStatus.Pass: ResultStatus.Fail,
+    severity: Severity.High
   }
 }
 
@@ -56,5 +70,11 @@ export function checkForVelero(pods) {
     console.log(chalk.red(`--- Velero is not installed`));
   } else {
     console.log(chalk.green("--- Velero is installed"));
+  }
+
+  return {
+    checkId: 'DR-3',
+    status: veleroInstalled.length? ResultStatus.Pass: ResultStatus.Fail,
+    severity: Severity.Medium
   }
 }
