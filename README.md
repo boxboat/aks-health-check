@@ -90,6 +90,12 @@ az group delete -g $RESOURCE_GROUP
 
 ## Developing
 
+### Requirements
+
+- [Node v12.22.1](https://github.com/nvm-sh/nvm)
+- Azure CLI
+- `kubectl`
+
 First, `npm install`.
 
 In VS Code, open the command patellete, then select **Debug: Toggle Auto-Attach** so that any new NodeJS application will attach the VS Code debugger.
