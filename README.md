@@ -99,9 +99,13 @@ az group delete -g $RESOURCE_GROUP
 First, `npm install`.
 
 In VS Code, open the command patellete, then select **Debug: Toggle Auto-Attach** so that any new NodeJS application will attach the VS Code debugger.
+Select the "Smart" mode.
 
 Then, from the VS Code terminal, invoke the CLI tool by running it against a cluster.
 
 ``` bash
-npm start -- -g <cluster resource group> -n <cluster name>
+az login 
+az set -s <subscription id>
+az aks get-credentials -n <cluster name> -g <resource group> --admin
+npm start -- check azure -g <cluster resource group> -n <cluster name>
 ```
