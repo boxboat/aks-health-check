@@ -18,7 +18,7 @@ $ az aks get-credentials -g <resource group> -n <cluster name> --admin
 
 $ az account set -s <subscription id>
 
-$ aks-hc -g <resource group> -n <cluster name>
+$ aks-hc check all -g <resource group> -n <cluster name>
 
 $ exit
 ```

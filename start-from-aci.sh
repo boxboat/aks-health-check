@@ -24,4 +24,4 @@ az login --identity --verbose
 az aks get-credentials -g $RESOURCE_GROUP -n $CLUSTER_NAME 
 
 echo "Logged in. Starting health check."
-aks-hc -n $CLUSTER_NAME -g $RESOURCE_GROUP | tee $OUTPUT_FILE_NAME
+aks-hc check all -n $CLUSTER_NAME -g $RESOURCE_GROUP | tee $OUTPUT_FILE_NAME
