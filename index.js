@@ -39,6 +39,8 @@ async function checkAzure(options) {
     containerRegistries = containerRegistries.filter(x => registriesArr.some(y => equalsIgnoreCase(y, x.name)));
   }
 
+  let results = [];
+
   // Check development items
   console.log();
   console.log(chalk.bgWhite(chalk.black('               Scanning Development Items               ')));
@@ -48,21 +50,24 @@ async function checkAzure(options) {
   // Check cluster setup items
   console.log();
   console.log(chalk.bgWhite(chalk.black('               Scanning Cluster Setup Items               ')));
-  ClusterSetup.checkForAuthorizedIpRanges(clusterDetails);
-  ClusterSetup.checkForManagedAadIntegration(clusterDetails);
-  ClusterSetup.checkForAutoscale(clusterDetails);
-  ClusterSetup.checkForMultipleNodePools(clusterDetails);
+  results.push(ClusterSetup.checkForAuthorizedIpRanges(clusterDetails));
+  results.push(ClusterSetup.checkForManagedAadIntegration(clusterDetails));
+  results.push(ClusterSetup.checkForAutoscale(clusterDetails));
+  results.push(ClusterSetup.checkForMultipleNodePools(clusterDetails));
 
   console.log();
   console.log(chalk.bgWhite(chalk.black('               Scanning Disaster Recovery Items               ')));
-  DisasterRecovery.checkForAvailabilityZones(clusterDetails);
-  DisasterRecovery.checkForControlPlaneSla(clusterDetails);
+  results.push(DisasterRecovery.checkForAvailabilityZones(clusterDetails));
+  results.push(DisasterRecovery.checkForControlPlaneSla(clusterDetails));
 
   // Check image management items
   console.log();
   console.log(chalk.bgWhite(chalk.black('               Scanning Image Management Items               ')));
-  ImageManagement.checkForPrivateEndpointsOnRegistries(containerRegistries);
-  await ImageManagement.checkForAksAcrRbacIntegration(clusterDetails, containerRegistries);
+  results.push(ImageManagement.checkForPrivateEndpointsOnRegistries(containerRegistries));
+  results.push(await ImageManagement.checkForAksAcrRbacIntegration(clusterDetails, containerRegistries));
+
+  const transformed = results.reduce((re, {checkId, ...x}) => { re[checkId] = x; return re}, {})
+  console.table(transformed);
 }
 
 async function checkKubernetes(options) {
@@ -108,41 +113,46 @@ async function checkKubernetes(options) {
     constraintTemplates = await getKubernetesJson('kubectl get constrainttemplate');
   }
 
+  let results = [];
+  
   // Check development items
   console.log();
   console.log(chalk.bgWhite(chalk.black('               Scanning Development Items               ')));
-  Development.checkForLivenessProbes(pods);
-  Development.checkForReadinessProbes(pods);
-  Development.checkForStartupProbes(pods);
-  Development.checkForPreStopHooks(pods);
-  Development.checkForSingleReplicas(deployments);
-  Development.checkForTags([namespaces.items, pods.items, deployments.items, services.items, configMaps.items, secrets.items]);
-  Development.checkForHorizontalPodAutoscalers(namespaces, autoScalers);
-  Development.checkForAzureSecretsStoreProvider(pods);
+  results.push(Development.checkForLivenessProbes(pods));
+  results.push(Development.checkForReadinessProbes(pods));
+  results.push(Development.checkForStartupProbes(pods));
+  results.push(Development.checkForPreStopHooks(pods));
+  results.push(Development.checkForSingleReplicas(deployments));
+  results.push(Development.checkForTags([namespaces.items, pods.items, deployments.items, services.items, configMaps.items, secrets.items]));
+  results.push(Development.checkForHorizontalPodAutoscalers(namespaces, autoScalers));
+  results.push(Development.checkForAzureSecretsStoreProvider(pods));
 
-  Development.checkForPodsInDefaultNamespace(pods);
-  Development.checkForPodsWithoutRequestsOrLimits(pods);
-  Development.checkForPodsWithDefaultSecurityContext(pods);
+  results.push(Development.checkForPodsInDefaultNamespace(pods));
+  results.push(Development.checkForPodsWithoutRequestsOrLimits(pods));
+  results.push(Development.checkForPodsWithDefaultSecurityContext(pods));
 
   // Check image management items
   console.log();
   console.log(chalk.bgWhite(chalk.black('               Scanning Image Management Items               ')));
   if (hasConstraintTemplates) {
-    ImageManagement.checkForAllowedImages(constraintTemplates);
-    ImageManagement.checkForNoPrivilegedContainers(constraintTemplates);
+    results.push(ImageManagement.checkForAllowedImages(constraintTemplates));
+    results.push(ImageManagement.checkForNoPrivilegedContainers(constraintTemplates));
   }
-  ImageManagement.checkForRuntimeContainerSecurity(pods);
+  results.push(ImageManagement.checkForRuntimeContainerSecurity(pods));
 
   // Check cluster setup items
   console.log();
   console.log(chalk.bgWhite(chalk.black('               Scanning Cluster Setup Items               ')));
-  ClusterSetup.checkForKubernetesDashboard(pods);
-  ClusterSetup.checkForServiceMesh(deployments, pods);
+  results.push(ClusterSetup.checkForKubernetesDashboard(pods));
+  results.push(ClusterSetup.checkForServiceMesh(deployments, pods));
 
   // Check disaster recovery items
   console.log();
   console.log(chalk.bgWhite(chalk.black('               Scanning Disaster Recovery Items               ')));
-  DisasterRecovery.checkForVelero(pods);
+  results.push(DisasterRecovery.checkForVelero(pods));
+
+  const transformed = results.reduce((re, {checkId, ...x}) => { re[checkId] = x; return re}, {})
+  console.table(transformed);
 }
 
 //
