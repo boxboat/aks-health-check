@@ -58,7 +58,6 @@ async function checkAzure(options) {
   console.log();
   console.log(chalk.bgWhite(chalk.black('               Scanning Image Management Items               ')));
   ImageManagement.checkForPrivateEndpointsOnRegistries(containerRegistries);
-  //TODO why is this async?
   await ImageManagement.checkForAksAcrRbacIntegration(clusterDetails, containerRegistries);
 }
 
