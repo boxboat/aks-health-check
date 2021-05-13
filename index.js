@@ -12,13 +12,7 @@ import * as ClusterSetup from './modules/clusterSetup.js';
 import * as DisasterRecovery from './modules/disasterRecovery.js';
 import { equalsIgnoreCase } from './helpers/stringCompare.js';
 
-//
-// Main function
-//
-async function main(options) {
-
-  // Sanity check the required programs are installed
-  await executeCommand("kubectl");
+async function checkAzure(options) {
   await executeCommand("az");
 
   // Parse container registries
@@ -34,13 +28,42 @@ async function main(options) {
 
   // Get container registries
   var containerRegistries = [];
-  if (registriesArr.length)
-  {
+  if (registriesArr.length) {
     console.log(chalk.blue("Fetching Azure Container Registry information..."));
     var commandResults = await executeCommand(`az acr list`);
     containerRegistries = JSON.parse(commandResults.stdout);
     containerRegistries = containerRegistries.filter(x => registriesArr.some(y => equalsIgnoreCase(y, x.name)));
   }
+
+    // Check development items
+    console.log();
+    console.log(chalk.bgWhite(chalk.black('               Scanning Development Items               ')));
+
+  Development.checkForAzureManagedPodIdentity(clusterDetails);
+
+  // Check cluster setup items
+  console.log();
+  console.log(chalk.bgWhite(chalk.black('               Scanning Cluster Setup Items               ')));
+  ClusterSetup.checkForAuthorizedIpRanges(clusterDetails);
+  ClusterSetup.checkForManagedAadIntegration(clusterDetails);
+  ClusterSetup.checkForAutoscale(clusterDetails);
+  ClusterSetup.checkForMultipleNodePools(clusterDetails);
+
+  console.log();
+  console.log(chalk.bgWhite(chalk.black('               Scanning Disaster Recovery Items               ')));
+  DisasterRecovery.checkForAvailabilityZones(clusterDetails);
+  DisasterRecovery.checkForControlPlaneSla(clusterDetails);
+
+  // Check image management items
+  console.log();
+  console.log(chalk.bgWhite(chalk.black('               Scanning Image Management Items               ')));
+  ImageManagement.checkForPrivateEndpointsOnRegistries(containerRegistries);
+  //TODO why is this async?
+  await ImageManagement.checkForAksAcrRbacIntegration(clusterDetails, containerRegistries);
+}
+
+async function checkKubernetes(options) {
+  await executeCommand("kubectl");
 
   // Fetch all the namespaces
   console.log(chalk.blue("Fetching all namespaces..."));
@@ -72,11 +95,11 @@ async function main(options) {
 
   var hasConstraintTemplates = await doesResourceExist("constrainttemplates");
   var constraintTemplates = null;
-  if (hasConstraintTemplates){
+  if (hasConstraintTemplates) {
     // Fetch all the constraint templates (Open Policy Agent)
     console.log(chalk.blue("Fetching all Constraint Templates..."));
     constraintTemplates = await getKubernetesJson('kubectl get constrainttemplate');
-  }  
+  }
 
   // Check development items
   console.log();
@@ -89,7 +112,7 @@ async function main(options) {
   Development.checkForTags([namespaces.items, pods.items, deployments.items, services.items, configMaps.items, secrets.items]);
   Development.checkForHorizontalPodAutoscalers(namespaces, autoScalers);
   Development.checkForAzureSecretsStoreProvider(pods);
-  Development.checkForAzureManagedPodIdentity(clusterDetails);
+
   Development.checkForPodsInDefaultNamespace(pods);
   Development.checkForPodsWithoutRequestsOrLimits(pods);
   Development.checkForPodsWithDefaultSecurityContext(pods);
@@ -97,30 +120,30 @@ async function main(options) {
   // Check image management items
   console.log();
   console.log(chalk.bgWhite(chalk.black('               Scanning Image Management Items               ')));
-  if (hasConstraintTemplates){
+  if (hasConstraintTemplates) {
     ImageManagement.checkForAllowedImages(constraintTemplates);
     ImageManagement.checkForNoPrivilegedContainers(constraintTemplates);
-  }  
-  await ImageManagement.checkForAksAcrRbacIntegration(clusterDetails, containerRegistries);
-  ImageManagement.checkForPrivateEndpointsOnRegistries(containerRegistries);
+  }
   ImageManagement.checkForRuntimeContainerSecurity(pods);
 
   // Check cluster setup items
   console.log();
   console.log(chalk.bgWhite(chalk.black('               Scanning Cluster Setup Items               ')));
-  ClusterSetup.checkForAuthorizedIpRanges(clusterDetails);
-  ClusterSetup.checkForManagedAadIntegration(clusterDetails);
-  ClusterSetup.checkForAutoscale(clusterDetails);
   ClusterSetup.checkForKubernetesDashboard(pods);
-  ClusterSetup.checkForMultipleNodePools(clusterDetails);
   ClusterSetup.checkForServiceMesh(deployments, pods);
 
   // Check disaster recovery items
   console.log();
   console.log(chalk.bgWhite(chalk.black('               Scanning Disaster Recovery Items               ')));
-  DisasterRecovery.checkForAvailabilityZones(clusterDetails);
-  DisasterRecovery.checkForControlPlaneSla(clusterDetails);
   DisasterRecovery.checkForVelero(pods);
+}
+
+//
+// Main function
+//
+async function main(options) {
+  await checkAzure(options);
+  await checkKubernetes(options);
 }
 
 // Build up the program
@@ -128,26 +151,24 @@ const program = new Command();
 program
   .name('boxboat-aks-healthcheck')
   .description('Health checks an AKS cluster using BoxBoat best practices');
-  
+
 const check = program.command('check');
 check
   .command('azure')
-  .action(() => {
-    console.log('TODO checking azure');
-  });
+  .requiredOption('-g, --resource-group <group>', 'Resource group of AKS cluster')
+  .requiredOption('-n, --name <name>', 'Name of AKS cluster')
+  .action(checkAzure);
 
 check
   .command('kubernetes')
-  .action(() => {
-    console.log('TODO checking kubernetes');
-  });
+  .option('-r, --image-registries <registries>', 'A comma-separated list of Azure Container Registry names used with the cluster')
+  .action(checkKubernetes);
 
 check
   .command('all')
   .requiredOption('-g, --resource-group <group>', 'Resource group of AKS cluster')
   .requiredOption('-n, --name <name>', 'Name of AKS cluster')
   .option('-r, --image-registries <registries>', 'A comma-separated list of Azure Container Registry names used with the cluster')
-  .option('-i, --ignore-namespaces <namespaces>', 'A comma-separated list of namespaces to ignore when doing analysis')
   .action(main);
 
 // Parse command
