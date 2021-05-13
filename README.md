@@ -6,9 +6,6 @@ This is a client-side tool that uses the Azure CLI to [AKS Best Practice](https:
 ## Option A - Run with Current User
 
 ``` bash
-# build the container
-docker build -t aks-health-check .
-
 docker run -it --rm aks-health-check 
 
 # Shell in the container
@@ -27,13 +24,6 @@ $ exit
 
 This option walks you through running the health check using an Azure Managed Identity so that it can be tied to a "service principal". Essentially, it avoids impersoning a user or running with someone's identity.
 
-Step zero, build the container image and push it your Azure Container Registry.
-
-``` bash
-# build the container
-docker build -t aks-health-check .
-```
-
 First, select the Azure subscription.
 ``` bash
 az account set -s <subscription id>
@@ -47,7 +37,6 @@ export HEALTH_CHECK_RESOURCE_GROUP="<resource group for health check resources>"
 export RESOURCE_GROUP="<cluster resource group>"
 export LOCATION="eastus"
 export MANAGED_IDENTITY_NAME="identity-aks-health-check"
-export CONTAINER_REGISTRY_USERNAME="BoxBoatRegistry"
 
 az group create -n $HEALTH_CHECK_RESOURCE_GROUP -l $LOCATION
 ```
@@ -80,9 +69,7 @@ Finally, we can spin up an Azure container instance running the AKS Health Check
 # Set the container admin registry password
 read CONTAINER_REGISTRY_PASSWORD
 az container create --resource-group $RESOURCE_GROUP -l eastus -n aks-health-check\
-    --image boxboatregistry.azurecr.io/aks-health-check:pre-1.0.6 --assign-identity $MANAGED_IDENTITY_CLIENT_ID \
-    --registry-username $AZURE_CONTAINER_REGISTRY \
-    --registry-password $CONTAINER_REGISTRY_PASSWORD  \
+    --image ghcr.io/boxboat/aks-health-check:0.0.1 --assign-identity $MANAGED_IDENTITY_CLIENT_ID \
     --command-line "./start-from-aci.sh" \
     -e CLUSTER_NAME=$CLUSTER_NAME RESOURCE_GROUP=$RESOURCE_GROUP OUTPUT_FILE_NAME=/var/logs/akshc/log$(date +%s).txt \
     --restart-policy Never --azure-file-volume-share-name $FILESHARE_NAME \
