@@ -249,7 +249,7 @@ export function checkForAzureManagedPodIdentity(clusterDetails) {
 
   return {
     checkId: 'DEV-8',
-    status: managedPodIdentityEnabled.length? ResultStatus.Pass: ResultStatus.Fail,
+    status: managedPodIdentityEnabled? ResultStatus.Pass: ResultStatus.Fail,
     severity: Severity.Medium
   }
 }
