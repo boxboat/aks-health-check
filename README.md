@@ -23,7 +23,7 @@ $ aks-hc -g <resource group> -n <cluster name>
 $ exit
 ```
 
-## Option B - Run with Azure Service Principal and Kubernetes service account
+## Option B - Run with Azure Service Principal
 
 This option walks you through running the health check using an Azure Managed Identity so that it can be tied to a "service principal". Essentially, it avoids impersoning a user or running with someone's identity.
 
