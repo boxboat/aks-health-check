@@ -156,10 +156,33 @@ async function main(options) {
 // Build up the program
 const program = new Command();
 program
-  .name('boxboat-aks-healthcheck')
-  .description('Health checks an AKS cluster using BoxBoat best practices');
+  .name('aks-hc')
+  .description(`
+  
+                  .,,,,* ,,,,,                                  
+                  .,,,,, ,,,,,                                                        
+            ,,,,,..,,,,, ,,,,, ,,,,,                            
+            ,,,,,..,,,,* ,,,,, ,,,,,                            
+      ,,,,, ,,,,,..,,,,, ,,,,, ,,,,, ,,,,,,                     
+      ,,,,, ,,,,,..,,,*(%(,,,, ,,,,, ,,,,,,                     
+                  /((((((%%%%%%%,                                
+      ,,,,,,((((((((((((%%%%%%%%%%%%#*,,,,,                     
+      .((((((((((((((((((%%%%%%%%%%%%%%%%%%/                     
+  ((((((((((((((((((((((%%%%%%%%%%%%%%%%%%%%%%.                 
+    #((((((((((((((((((((%%%%%%%%%%%%%%%%%%%%%,                  
+     ((((((((((((((((((((%%%%%%%%%%%%%%%%%%%%                    
+      ,((((((((((((((((((%%%%%%%%%%%%%%%%%%%                     
+        (((((((((((((((((%%%%%%%%%%%%%%%%%#                      
+        ((((((((((((((((%%%%%%%%%%%%%%%%(                       
+          #(((((#((((((((%%%%%%%%%%%%%%%,                        
+      ,,, /#, ,,, .##  ,,, /%# .,,. #%  ,,,   
+  
+  BoxBoat's AKS Health Check
 
-const check = program.command('check');
+  Check for best practices against an Azure Kubernetes Service (AKS) cluster.`
+  );
+
+const check = program.command('check', {isDefault: true});
 check
   .command('azure')
   .requiredOption('-g, --resource-group <group>', 'Resource group of AKS cluster')
@@ -174,7 +197,7 @@ check
   .action(checkKubernetes);
 
 check
-  .command('all')
+  .command('all', {isDefault: true})
   .requiredOption('-g, --resource-group <group>', 'Resource group of AKS cluster')
   .requiredOption('-n, --name <name>', 'Name of AKS cluster')
   .option('-r, --image-registries <registries>', 'A comma-separated list of Azure Container Registry names used with the cluster')
