@@ -42,10 +42,6 @@ async function main(options) {
     containerRegistries = containerRegistries.filter(x => registriesArr.some(y => equalsIgnoreCase(y, x.name)));
   }
 
-  // Get kube credentials
-  console.log(chalk.blue("Refreshing kubernetes credentials..."));
-  await executeCommand(`az aks get-credentials -g ${options.resourceGroup} -n ${options.name} --admin`);
-
   // Fetch all the namespaces
   console.log(chalk.blue("Fetching all namespaces..."));
   var namespaces = await getKubernetesJson('kubectl get ns', options);

@@ -14,6 +14,8 @@ docker run -it --rm aks-health-check
 # Shell in the container
 $ az login
 
+$ az aks get-credentials -g <resource group> -n <cluster name> --admin
+
 $ az account set -s <subscription id>
 
 $ aks-hc -g <resource group> -n <cluster name>
