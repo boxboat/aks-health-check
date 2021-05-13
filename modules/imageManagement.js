@@ -1,6 +1,9 @@
 import chalk from "chalk"
 import { equalsIgnoreCase } from '../helpers/stringCompare.js';
 import { executeCommand } from '../helpers/commandHelpers.js';
+import { ResultStatus } from '../helpers/commandStatus.js';
+import { Severity } from '../helpers/commandSeverity.js';
+
 
 //
 // Checks for the 'only use allowed images' policy
@@ -19,6 +22,12 @@ export function checkForAllowedImages(constraintTemplates) {
     console.log(chalk.red(`--- 'Only use allowed images' policy not applied`));
   } else {
     console.log(chalk.green("--- 'Only use allowed images' policy applied"));
+  }
+
+  return {
+    checkId: 'IM-1',
+    status: constraintDefined.length? ResultStatus.Pass: ResultStatus.Fail,
+    severity: Severity.High
   }
 }
 
@@ -39,6 +48,12 @@ export function checkForNoPrivilegedContainers(constraintTemplates) {
     console.log(chalk.red(`--- 'No privileged containers' policy not applied`));
   } else {
     console.log(chalk.green("--- 'No privileged containers' policy applied"));
+  }
+
+  return {
+    checkId: 'IM-2',
+    status: constraintDefined.length? ResultStatus.Pass: ResultStatus.Fail,
+    severity: Severity.High
   }
 }
 
@@ -70,6 +85,12 @@ export async function checkForAksAcrRbacIntegration(clusterDetails, containerReg
   } else {
     console.log(chalk.green("--- All registries have AKS/ACR RBAC integration"));
   }
+
+  return {
+    checkId: 'IM-3',
+    status: !problemRegistries.length? ResultStatus.Pass: ResultStatus.Fail,
+    severity: Severity.High
+  }
 }
 
 //
@@ -88,6 +109,12 @@ export function checkForPrivateEndpointsOnRegistries(containerRegistries) {
     console.log(chalk.red(`--- ${problemRegistries.length} registries did not have private endpoints configured`));
   } else {
     console.log(chalk.green("--- All registries have private endpoints configured"));
+  }
+
+  return {
+    checkId: 'IM-4',
+    status: !problemRegistries.length? ResultStatus.Pass: ResultStatus.Fail,
+    severity: Severity.Medium
   }
 }
 
@@ -123,5 +150,11 @@ export function checkForRuntimeContainerSecurity(pods) {
     if (aquaInstalled) console.log(chalk.green(`--- Aqua Kube-Enforcer was found`));
     if (anchoreInstalled) console.log(chalk.green(`--- Anchore Engine was found`));
     if (paloAltoInstalled) console.log(chalk.green(`--- Palo Alto Twistlock was found`));
+  }
+
+  return {
+    checkId: 'IM-4',
+    status: knownToolInstalled? ResultStatus.Pass: ResultStatus.Fail,
+    severity: Severity.Medium
   }
 }

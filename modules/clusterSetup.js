@@ -1,11 +1,12 @@
 import chalk from "chalk"
 import { equalsIgnoreCase } from '../helpers/stringCompare.js';
+import { ResultStatus } from '../helpers/commandStatus.js';
+import { Severity } from '../helpers/commandSeverity.js';
 
 //
 // Checks if the cluster master has authorized ip ranges set
 //
 export function checkForAuthorizedIpRanges(clusterDetails) {
-
   console.log(chalk.white("Checking for authorized ip ranges..."));
 
   // Check if authorized ip ranges is non-null
@@ -18,6 +19,12 @@ export function checkForAuthorizedIpRanges(clusterDetails) {
     console.log(chalk.red(`--- Authorized IP Ranges are not configured for the API server`));
   } else {
     console.log(chalk.green("--- Authorized IP Ranges are configured for the API server"));
+  }
+
+  return {
+    checkId: 'CSP-1',
+    status: authorizedIpRangesConfigured? ResultStatus.Pass: ResultStatus.Fail,
+    severity: Severity.High
   }
 }
 
@@ -37,6 +44,12 @@ export function checkForManagedAadIntegration(clusterDetails) {
   } else {
     console.log(chalk.green("--- Managed Azure Active Direectory integration is configured"));
   }
+
+  return {
+    checkId: 'CSP-2',
+    status: aadIntegrationConfigured? ResultStatus.Pass: ResultStatus.Fail,
+    severity: Severity.High
+  }
 }
 
 //
@@ -54,6 +67,12 @@ export function checkForAutoscale(clusterDetails) {
     console.log(chalk.red(`--- Autoscale is not configured`));
   } else {
     console.log(chalk.green("--- Autoscale is configured"));
+  }
+
+  return {
+    checkId: 'CSP-3',
+    status: autoscaleConfigured? ResultStatus.Pass: ResultStatus.Fail,
+    severity: Severity.Medium
   }
 }
 
@@ -75,6 +94,12 @@ export function checkForKubernetesDashboard(pods) {
   } else {
     console.log(chalk.green("--- Kubernetes dashboard is not installed"));
   }
+
+  return {
+    checkId: 'CSP-4',
+    status: !dashboardInstalled? ResultStatus.Pass: ResultStatus.Fail,
+    severity: Severity.High
+  }
 }
 
 //
@@ -92,6 +117,12 @@ export function checkForMultipleNodePools(clusterDetails) {
     console.log(chalk.red(`--- Only one node pool exists on the cluster`));
   } else {
     console.log(chalk.green("--- Multiple node pools exist on the cluster"));
+  }
+
+  return {
+    checkId: 'CSP-5',
+    status: multipleNodePoolsConfigured? ResultStatus.Pass: ResultStatus.Fail,
+    severity: Severity.Medium
   }
 }
 
@@ -139,5 +170,11 @@ export function checkForServiceMesh(deployments, pods) {
     if (consulInstalled) console.log(chalk.green(`--- Consul was found`));
     if (linkerdInstalled) console.log(chalk.green(`--- Linkerd was found`));
     if (osmInstalled) console.log(chalk.green(`--- Open Service Mesh was found`));
+  }
+
+  return {
+    checkId: 'CSP-5',
+    status: ResultStatus.NotApply,
+    severity: Severity.Informational
   }
 }

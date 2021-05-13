@@ -1,4 +1,6 @@
 import chalk from "chalk"
+import { ResultStatus } from '../helpers/commandStatus.js';
+import { Severity } from '../helpers/commandSeverity.js';
 
 //
 // Checks for any pods without liveness probes
@@ -18,6 +20,12 @@ export function checkForLivenessProbes(pods) {
     console.log(chalk.red(`--- Found ${podsWithoutLivenessProbes.length} pods without liveness probes`));
   } else {
     console.log(chalk.green('--- All pods have liveness probes'));
+  }
+
+  return {
+    checkId: 'DEV-1',
+    status: !podsWithoutLivenessProbes.length? ResultStatus.Pass: ResultStatus.Fail,
+    severity: Severity.Medium
   }
 }
 
@@ -40,6 +48,12 @@ export function checkForReadinessProbes(pods) {
   } else {
     console.log(chalk.green('--- All pods have readiness probes'));
   }
+
+  return {
+    checkId: 'DEV-2',
+    status: !podsWithoutReadinessProbes.length? ResultStatus.Pass: ResultStatus.Fail,
+    severity: Severity.Medium
+  }
 }
 
 //
@@ -60,6 +74,12 @@ export function checkForStartupProbes(pods) {
     console.log(chalk.red(`--- Found ${podsWithoutStartupProbes.length} pods without startup probes`));
   } else {
     console.log(chalk.green('--- All pods have startup probes'));
+  }
+
+  return {
+    checkId: 'DEV-3',
+    status: !podsWithoutStartupProbes.length? ResultStatus.Pass: ResultStatus.Fail,
+    severity: Severity.Medium
   }
 }
 
@@ -82,6 +102,12 @@ export function checkForPreStopHooks(pods) {
   } else {
     console.log(chalk.green('--- All pods have preStop hooks'));
   }
+
+  return {
+    checkId: 'DEV-3',
+    status: !podsWithoutPreStopHooks.length? ResultStatus.Pass: ResultStatus.Fail,
+    severity: Severity.Medium
+  }
 }
 
 //
@@ -102,6 +128,12 @@ export function checkForSingleReplicas(deployments) {
     console.log(chalk.red(`--- Found ${deploymentsWithOneReplica.length} deployments with a single replica`));
   } else {
     console.log(chalk.green('--- All deployments have more than one replica'));
+  }
+
+  return {
+    checkId: 'DEV-4',
+    status: !deploymentsWithOneReplica.length? ResultStatus.Pass: ResultStatus.Fail,
+    severity: Severity.High
   }
 }
 
@@ -130,6 +162,12 @@ export function checkForTags(resources) {
   } else {
     console.log(chalk.green('--- All resources have labels or annotations'));
   }
+
+  return {
+    checkId: 'DEV-5',
+    status: !resourcesWithoutTags.length? ResultStatus.Pass: ResultStatus.Fail,
+    severity: Severity.High
+  }
 }
 
 //
@@ -151,6 +189,12 @@ export function checkForHorizontalPodAutoscalers(namespaces, autoScalers) {
     console.log(chalk.red(`--- Found ${namespacesWithoutAutoscalers.length} namespaces without any Horizontal Pod Autoscalers`));
   } else {
     console.log(chalk.green('--- All namespaces contain Horizontal Pod Autoscalers'));
+  }
+
+  return {
+    checkId: 'DEV-6',
+    status: !namespacesWithoutAutoscalers.length? ResultStatus.Pass: ResultStatus.Fail,
+    severity: Severity.Low
   }
 }
 
@@ -177,6 +221,12 @@ export function checkForAzureSecretsStoreProvider(pods) {
   } else {
     console.log(chalk.green('--- Azure Secrets Store Provider is installed'));
   }
+
+  return {
+    checkId: 'DEV-7',
+    status: secretsStoreProviderExists.length? ResultStatus.Pass: ResultStatus.Fail,
+    severity: Severity.Medium
+  }
 }
 
 //
@@ -195,6 +245,12 @@ export function checkForAzureManagedPodIdentity(clusterDetails) {
     console.log(chalk.red('--- Azure Managed Identity for pods is not enabled'));
   } else {
     console.log(chalk.green('--- Azure Managed Identity for pods is enabled'));
+  }
+
+  return {
+    checkId: 'DEV-8',
+    status: managedPodIdentityEnabled.length? ResultStatus.Pass: ResultStatus.Fail,
+    severity: Severity.Medium
   }
 }
 
@@ -216,6 +272,12 @@ export function checkForPodsInDefaultNamespace(pods) {
   } else {
     console.log(chalk.green('--- No pods running in default namespace'));
   }
+
+  return {
+    checkId: 'DEV-9',
+    status: !podsInDefaultNamespace.length? ResultStatus.Pass: ResultStatus.Fail,
+    severity: Severity.High
+  }
 }
 
 //
@@ -236,6 +298,12 @@ export function checkForPodsWithoutRequestsOrLimits(pods) {
     console.log(chalk.red(`--- Found ${podsWithNoRequestsOrLimits.length} pods without either resource requests or limits`));
   } else {
     console.log(chalk.green('--- All pods have resource requests and limits'));
+  }
+
+  return {
+    checkId: 'DEV-10',
+    status: !podsWithNoRequestsOrLimits.length? ResultStatus.Pass: ResultStatus.Fail,
+    severity: Severity.High
   }
 }
 
@@ -259,5 +327,11 @@ export function checkForPodsWithDefaultSecurityContext(pods) {
     console.log(chalk.red(`--- Found ${podsWithDefaultSecurityContext.length} pods using the default security context`));
   } else {
     console.log(chalk.green('--- All pods have their security context specified'));
+  }
+
+  return {
+    checkId: 'DEV-11',
+    status: !podsWithDefaultSecurityContext.length? ResultStatus.Pass: ResultStatus.Fail,
+    severity: Severity.High
   }
 }
