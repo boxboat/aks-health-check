@@ -8,6 +8,7 @@ on:
 env:
   # TODO: Change variable to your image's name.
   IMAGE_NAME: aks-health-check
+  DOCKER_BUILDKIT: 1
 
 jobs:
   # Run tests.
