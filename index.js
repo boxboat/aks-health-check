@@ -15,6 +15,10 @@ import { equalsIgnoreCase } from './helpers/stringCompare.js';
 async function checkAzure(options) {
   await executeCommand("az");
 
+  if (options.dryRun === undefined) ; // No dry run
+  else if (options.dryRun === true) console.log('Dry run coming soon. (mode: fail)');
+  else console.log(`Dry run coming soon. (mode: ${options.dryRun})`);
+
   // Parse container registries
   var registriesArr = options.imageRegistries ? options.imageRegistries.split(',') : [];
 
@@ -63,6 +67,10 @@ async function checkAzure(options) {
 
 async function checkKubernetes(options) {
   await executeCommand("kubectl");
+
+  if (options.dryRun === undefined) ; // No dry run
+  else if (options.dryRun === true) console.log('Dry run coming soon. (mode: fail)');
+  else console.log(`Dry run coming soon. (mode: ${options.dryRun})`);
 
   // Fetch all the namespaces
   console.log(chalk.blue("Fetching all namespaces..."));
@@ -149,19 +157,20 @@ async function main(options) {
 const program = new Command();
 program
   .name('boxboat-aks-healthcheck')
-  .description('Health checks an AKS cluster using BoxBoat best practices')
-  .option('--dry-run [mode]', "Dry run with mode 'fail' or 'pass'. Defaults to 'fail'. Do not actually perform the checks, just observe results.");
+  .description('Health checks an AKS cluster using BoxBoat best practices');
 
 const check = program.command('check');
 check
   .command('azure')
   .requiredOption('-g, --resource-group <group>', 'Resource group of AKS cluster')
   .requiredOption('-n, --name <name>', 'Name of AKS cluster')
+  
   .action(checkAzure);
 
 check
   .command('kubernetes')
   .option('-r, --image-registries <registries>', 'A comma-separated list of Azure Container Registry names used with the cluster')
+  .option('--dry-run [mode]', "Dry run with mode 'fail' or 'pass'. Defaults to 'fail'. Do not actually perform the checks, just observe results.")
   .action(checkKubernetes);
 
 check
