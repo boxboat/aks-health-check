@@ -35,9 +35,9 @@ async function checkAzure(options) {
     containerRegistries = containerRegistries.filter(x => registriesArr.some(y => equalsIgnoreCase(y, x.name)));
   }
 
-    // Check development items
-    console.log();
-    console.log(chalk.bgWhite(chalk.black('               Scanning Development Items               ')));
+  // Check development items
+  console.log();
+  console.log(chalk.bgWhite(chalk.black('               Scanning Development Items               ')));
 
   Development.checkForAzureManagedPodIdentity(clusterDetails);
 
@@ -149,7 +149,8 @@ async function main(options) {
 const program = new Command();
 program
   .name('boxboat-aks-healthcheck')
-  .description('Health checks an AKS cluster using BoxBoat best practices');
+  .description('Health checks an AKS cluster using BoxBoat best practices')
+  .option('--dry-run [mode]', "Dry run with mode 'fail' or 'pass'. Defaults to 'fail'. Do not actually perform the checks, just observe results.");
 
 const check = program.command('check');
 check
