@@ -1,6 +1,8 @@
 
 # BoxBoat's AKS Health Check
 
+[![Known Vulnerabilities](https://snyk.io/test/github/boxboat/aks-health-check/badge.svg)](https://snyk.io/test/github/boxboat/aks-health-check)
+
 This is a client-side tool that uses the Azure CLI to [AKS Best Practice](https://www.the-aks-checklist.com/) checks against the Azure plane and the Kubernetes plane.
 
 ## Option A - Run with Current User
