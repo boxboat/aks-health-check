@@ -35,6 +35,18 @@ jobs:
           else
             docker build . --file Dockerfile
           fi
+  scan: 
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@master
+      - uses: snyk/actions/setup@master
+      - uses: actions/setup-go@v1
+        with:
+          go-version: '1.13'
+      - name: Snyk monitor
+        run: snyk test
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
 
   # Push image to GitHub Packages.
   # See also https://docs.docker.com/docker-hub/builds/
