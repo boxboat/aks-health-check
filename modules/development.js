@@ -12,12 +12,14 @@ export function checkForLivenessProbes(pods) {
   // Find all the pods without liveness probes
   var podsWithoutLivenessProbes = pods
     .items
-    .filter(x => x.spec.containers.some(y => !y.livenessProbe))
-    .map(x => x.metadata.name);
+    .filter(x => x.spec.containers.some(y => !y.livenessProbe));
 
   // Log output
   if (podsWithoutLivenessProbes.length) {
     console.log(chalk.red(`--- Found ${podsWithoutLivenessProbes.length} pods without liveness probes`));
+    if (global.verbose) {
+      podsWithoutLivenessProbes.forEach(x => console.log(chalk.red(`------ ${x.metadata.namespace} - ${x.metadata.name}`)));
+    }
   } else {
     console.log(chalk.green('--- All pods have liveness probes'));
   }
@@ -39,12 +41,14 @@ export function checkForReadinessProbes(pods) {
   // Find all the pods without readiness probes
   var podsWithoutReadinessProbes = pods
     .items
-    .filter(x => x.spec.containers.some(y => !y.readinessProbe))
-    .map(x => x.metadata.name);
+    .filter(x => x.spec.containers.some(y => !y.readinessProbe));
 
   // Log output
   if (podsWithoutReadinessProbes.length) {
     console.log(chalk.red(`--- Found ${podsWithoutReadinessProbes.length} pods without readiness probes`));
+    if (global.verbose) {
+      podsWithoutReadinessProbes.forEach(x => console.log(chalk.red(`------ ${x.metadata.namespace} - ${x.metadata.name}`)));
+    }
   } else {
     console.log(chalk.green('--- All pods have readiness probes'));
   }
@@ -66,12 +70,14 @@ export function checkForStartupProbes(pods) {
   // Find all the pods without startup probes
   var podsWithoutStartupProbes = pods
     .items
-    .filter(x => x.spec.containers.some(y => !y.startupProbe))
-    .map(x => x.metadata.name);
+    .filter(x => x.spec.containers.some(y => !y.startupProbe));
 
   // Log output
   if (podsWithoutStartupProbes.length) {
     console.log(chalk.red(`--- Found ${podsWithoutStartupProbes.length} pods without startup probes`));
+    if (global.verbose) {
+      podsWithoutStartupProbes.forEach(x => console.log(chalk.red(`------ ${x.metadata.namespace} - ${x.metadata.name}`)));
+    }
   } else {
     console.log(chalk.green('--- All pods have startup probes'));
   }
@@ -93,12 +99,14 @@ export function checkForPreStopHooks(pods) {
   // Find all the pods without preStop hooks
   var podsWithoutPreStopHooks = pods
     .items
-    .filter(x => x.spec.containers.some(y => !y.lifecycle || !y.lifecycle.preStop))
-    .map(x => x.metadata.name);
+    .filter(x => x.spec.containers.some(y => !y.lifecycle || !y.lifecycle.preStop));
 
   // Log output
   if (podsWithoutPreStopHooks.length) {
     console.log(chalk.red(`--- Found ${podsWithoutPreStopHooks.length} pods without preStop hooks`));
+    if (global.verbose) {
+      podsWithoutPreStopHooks.forEach(x => console.log(chalk.red(`------ ${x.metadata.namespace} - ${x.metadata.name}`)));
+    }
   } else {
     console.log(chalk.green('--- All pods have preStop hooks'));
   }
@@ -120,12 +128,14 @@ export function checkForSingleReplicas(deployments) {
   // Find all the deployments with a single replica
   var deploymentsWithOneReplica = deployments
     .items
-    .filter(x => x.spec.replicas == 1)
-    .map(x => x.metadata.name);
+    .filter(x => x.spec.replicas == 1);
 
   // Log output
   if (deploymentsWithOneReplica.length) {
     console.log(chalk.red(`--- Found ${deploymentsWithOneReplica.length} deployments with a single replica`));
+    if (global.verbose) {
+      deploymentsWithOneReplica.forEach(x => console.log(chalk.red(`------ ${x.metadata.namespace} - ${x.metadata.name}`)));
+    }
   } else {
     console.log(chalk.green('--- All deployments have more than one replica'));
   }
@@ -153,12 +163,14 @@ export function checkForTags(resources) {
   var resourcesWithoutTags = allResources
     .filter(x =>
       (!x.metadata.labels || Object.keys(x.metadata.labels).length == 0) &&
-      (!x.metadata.annotations || Object.keys(x.metadata.annotations).length == 0))
-    .map(x => x.metadata.name);
+      (!x.metadata.annotations || Object.keys(x.metadata.annotations).length == 0));
 
   // Log output
   if (resourcesWithoutTags.length) {
     console.log(chalk.red(`--- Found ${resourcesWithoutTags.length} resources without labels or annotations`));
+    if (global.verbose) {
+      resourcesWithoutTags.forEach(x => console.log(chalk.red(`------ ${x.metadata.namespace} - ${x.metadata.name} - ${x.kind}`)));
+    }
   } else {
     console.log(chalk.green('--- All resources have labels or annotations'));
   }
@@ -290,12 +302,14 @@ export function checkForPodsWithoutRequestsOrLimits(pods) {
   // Grab the pods with no requests or limits defined
   var podsWithNoRequestsOrLimits = pods
     .items
-    .filter(x => x.spec.containers.some(y => !y.resources.limits || !y.resources.requests))
-    .map(x => x.metadata.name);
+    .filter(x => x.spec.containers.some(y => !y.resources.limits || !y.resources.requests));
 
   // Log output
   if (podsWithNoRequestsOrLimits.length) {
     console.log(chalk.red(`--- Found ${podsWithNoRequestsOrLimits.length} pods without either resource requests or limits`));
+    if (global.verbose) {
+      podsWithNoRequestsOrLimits.forEach(x => console.log(chalk.red(`------ ${x.metadata.namespace} - ${x.metadata.name}`)));
+    }
   } else {
     console.log(chalk.green('--- All pods have resource requests and limits'));
   }
@@ -319,12 +333,14 @@ export function checkForPodsWithDefaultSecurityContext(pods) {
     .items
     .filter(x =>
       Object.keys(x.spec.securityContext).length == 0 &&
-      x.spec.containers.some(y => !y.securityContext || Object.keys(y.securityContext).length == 0))
-    .map(x => x.metadata.name);
+      x.spec.containers.some(y => !y.securityContext || Object.keys(y.securityContext).length == 0));
 
   // Log output
   if (podsWithDefaultSecurityContext.length) {
     console.log(chalk.red(`--- Found ${podsWithDefaultSecurityContext.length} pods using the default security context`));
+    if (global.verbose) {
+      podsWithDefaultSecurityContext.forEach(x => console.log(chalk.red(`------ ${x.metadata.namespace} - ${x.metadata.name}`)));
+    }
   } else {
     console.log(chalk.green('--- All pods have their security context specified'));
   }

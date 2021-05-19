@@ -70,11 +70,16 @@ export async function checkForAksAcrRbacIntegration(clusterDetails, containerReg
 
   // If the kubelet identity object id is null, attempt to grab from service principal client id
   if (!kubeletIdentityObjectId) {
-    var clientId = clusterDetails.servicePrincipalProfile && clusterDetails.servicePrincipalProfile.clientId;
-    if (clientId) {
-      var commandResults = await executeCommand(`az ad sp list --all --query "[?@.appId=='${clientId}']"`);
-      var appDetails = JSON.parse(commandResults.stdout);
-      kubeletIdentityObjectId = appDetails && appDetails.length && appDetails[0].objectId;
+    try {
+      var clientId = clusterDetails.servicePrincipalProfile && clusterDetails.servicePrincipalProfile.clientId;
+      if (clientId) {
+        var commandResults = await executeCommand(`az ad sp list --all --query "[?@.appId=='${clientId}']"`);
+        var appDetails = JSON.parse(commandResults.stdout);
+        kubeletIdentityObjectId = appDetails && appDetails.length && appDetails[0].objectId;
+      }
+    }
+    catch (e) {
+      console.log(chalk.red(`--- An error occurred retrieving all service principals: ${e}`));
     }
   }
 
