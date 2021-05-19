@@ -204,6 +204,7 @@ check
   .command('kubernetes')
   .option('-r, --image-registries <registries>', 'A comma-separated list of Azure Container Registry names used with the cluster')
   .option('--dry-run [mode]', "Dry run with mode 'fail' or 'pass'. Defaults to 'fail'. Do not actually perform the checks, just observe results.")
+  .option('-i, --ignore-namespaces <namespaces>', 'A comma-separated list of namespaces to ignore when doing analysis')
   .action(checkKubernetes);
 
 check
@@ -212,6 +213,7 @@ check
   .requiredOption('-n, --name <name>', 'Name of AKS cluster')
   .option('-r, --image-registries <registries>', 'A comma-separated list of Azure Container Registry names used with the cluster')
   .option('--dry-run [mode]', "Dry run with mode 'fail' or 'pass'. Defaults to 'fail'. Do not actually perform the checks, just observe results.")
+  .option('-i, --ignore-namespaces <namespaces>', 'A comma-separated list of namespaces to ignore when doing analysis')
   .action(main);
 
 // Parse command

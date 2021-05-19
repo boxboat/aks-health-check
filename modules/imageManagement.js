@@ -64,8 +64,29 @@ export async function checkForAksAcrRbacIntegration(clusterDetails, containerReg
 
   console.log(chalk.white("Checking for ACR/AKS RBAC integration for pulling images..."));
 
-  // Grab the kubelet identity
-  var kubeletIdentityObjectId = clusterDetails.identityProfile.kubeletidentity.objectId;
+  // Grab the kubelet identity from identity profile
+  var identityProfile = clusterDetails.identityProfile;
+  var kubeletIdentityObjectId = identityProfile && identityProfile.kubeletidentity.objectId;
+
+  // If the kubelet identity object id is null, attempt to grab from service principal client id
+  if (!kubeletIdentityObjectId) {
+    var clientId = clusterDetails.servicePrincipalProfile && clusterDetails.servicePrincipalProfile.clientId;
+    if (clientId) {
+      var commandResults = await executeCommand(`az ad sp list --all --query "[?@.appId=='${clientId}']"`);
+      var appDetails = JSON.parse(commandResults.stdout);
+      kubeletIdentityObjectId = appDetails && appDetails.length && appDetails[0].objectId;
+    }
+  }
+
+  // Sanity check cluster identity
+   if (!kubeletIdentityObjectId) {
+     console.log(chalk.red('--- Could not determine cluster identity. Stopping check.'));
+     return {
+      checkId: 'IM-3',
+      status: ResultStatus.Fail,
+      severity: Severity.High
+    }
+   }
 
   // Grab the roles for the identity
   var commandResults = await executeCommand(`az role assignment list --assignee '${kubeletIdentityObjectId}' --all`);
