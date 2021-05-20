@@ -8,7 +8,7 @@ This is a client-side tool that uses the Azure CLI to [AKS Best Practice](https:
 ## Option A - Run with Current User
 
 ``` bash
-docker run -it --rm aks-health-check 
+docker run -it --rm ghcr.io/boxboat/aks-health-check
 
 # Shell in the container
 $ az login
@@ -71,7 +71,7 @@ Finally, we can spin up an Azure container instance running the AKS Health Check
 # Set the container admin registry password
 read CONTAINER_REGISTRY_PASSWORD
 az container create --resource-group $RESOURCE_GROUP -l eastus -n aks-health-check\
-    --image ghcr.io/boxboat/aks-health-check:0.0.1 --assign-identity $MANAGED_IDENTITY_CLIENT_ID \
+    --image ghcr.io/boxboat/aks-health-check --assign-identity $MANAGED_IDENTITY_CLIENT_ID \
     --command-line "./start-from-aci.sh" \
     -e CLUSTER_NAME=$CLUSTER_NAME RESOURCE_GROUP=$RESOURCE_GROUP OUTPUT_FILE_NAME=/var/logs/akshc/log$(date +%s).txt \
     --restart-policy Never --azure-file-volume-share-name $FILESHARE_NAME \
