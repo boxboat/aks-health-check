@@ -13,9 +13,9 @@ docker run -it --rm ghcr.io/boxboat/aks-health-check
 # Shell in the container
 $ az login
 
-$ az aks get-credentials -g <resource group> -n <cluster name> --admin
-
 $ az account set -s <subscription id>
+
+$ az aks get-credentials -g <resource group> -n <cluster name> --admin
 
 $ aks-hc check all -g <resource group> -n <cluster name>
 
