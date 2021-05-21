@@ -9,23 +9,35 @@ import { Severity } from '../helpers/commandSeverity.js';
 export function checkForAuthorizedIpRanges(clusterDetails) {
   console.log(chalk.white("Checking for authorized ip ranges..."));
 
-  // Check if authorized ip ranges is non-null
-  var authorizedIpRangesConfigured = (clusterDetails
-    .apiServerAccessProfile
-    .authorizedIpRanges || []).length > 0;
+  try {
+    // Check if authorized ip ranges is non-null
+    var authorizedIpRangesConfigured = (clusterDetails
+      .apiServerAccessProfile
+      .authorizedIpRanges || []).length > 0;
 
-  // Log output
-  if (!authorizedIpRangesConfigured) {
-    console.log(chalk.red(`--- Authorized IP Ranges are not configured for the API server`));
-  } else {
-    console.log(chalk.green("--- Authorized IP Ranges are configured for the API server"));
-  }
+    // Log output
+    if (!authorizedIpRangesConfigured) {
+      console.log(chalk.red(`--- Authorized IP Ranges are not configured for the API server`));
+    } else {
+      console.log(chalk.green("--- Authorized IP Ranges are configured for the API server"));
+    }
 
-  return {
-    checkId: 'CSP-1',
-    status: authorizedIpRangesConfigured? ResultStatus.Pass: ResultStatus.Fail,
-    severity: Severity.High
+    return {
+      checkId: 'CSP-1',
+      status: authorizedIpRangesConfigured? ResultStatus.Pass: ResultStatus.Fail,
+      severity: Severity.High
+    }
   }
+  catch (e) {
+    console.log(chalk.red(`EXCEPTION: ${e}`));
+
+    return {
+      checkId: 'CSP-1',
+      status: ResultStatus.NotApply,
+      severity: Severity.High
+    }
+  }
+  
 }
 
 //
