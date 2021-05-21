@@ -15,6 +15,8 @@ import { equalsIgnoreCase } from './helpers/stringCompare.js';
 async function checkAzure(options) {
   await executeCommand("az");
 
+  setupGlobals(options);
+
   if (options.dryRun === undefined) ; // No dry run
   else if (options.dryRun === true) console.log('Dry run coming soon. (mode: fail)');
   else console.log(`Dry run coming soon. (mode: ${options.dryRun})`);
@@ -72,6 +74,8 @@ async function checkAzure(options) {
 
 async function checkKubernetes(options) {
   await executeCommand("kubectl");
+
+  setupGlobals(options);
 
   if (options.dryRun === undefined) ; // No dry run
   else if (options.dryRun === true) console.log('Dry run coming soon. (mode: fail)');
@@ -156,6 +160,13 @@ async function checkKubernetes(options) {
 }
 
 //
+// Setup globals
+//
+function setupGlobals(options) {
+  global.verbose = options.verbose ? true : false;
+}
+
+//
 // Main function
 //
 async function main(options) {
@@ -198,6 +209,7 @@ check
   .requiredOption('-g, --resource-group <group>', 'Resource group of AKS cluster')
   .requiredOption('-n, --name <name>', 'Name of AKS cluster')
   .option('--dry-run [mode]', "Dry run with mode 'fail' or 'pass'. Defaults to 'fail'. Do not actually perform the checks, just observe results.")
+  .option('-v, --verbose', 'Enable verbose console logging')
   .action(checkAzure);
 
 check
@@ -205,6 +217,7 @@ check
   .option('-r, --image-registries <registries>', 'A comma-separated list of Azure Container Registry names used with the cluster')
   .option('--dry-run [mode]', "Dry run with mode 'fail' or 'pass'. Defaults to 'fail'. Do not actually perform the checks, just observe results.")
   .option('-i, --ignore-namespaces <namespaces>', 'A comma-separated list of namespaces to ignore when doing analysis')
+  .option('-v, --verbose', 'Enable verbose console logging')
   .action(checkKubernetes);
 
 check
@@ -214,6 +227,7 @@ check
   .option('-r, --image-registries <registries>', 'A comma-separated list of Azure Container Registry names used with the cluster')
   .option('--dry-run [mode]', "Dry run with mode 'fail' or 'pass'. Defaults to 'fail'. Do not actually perform the checks, just observe results.")
   .option('-i, --ignore-namespaces <namespaces>', 'A comma-separated list of namespaces to ignore when doing analysis')
+  .option('-v, --verbose', 'Enable verbose console logging')
   .action(main);
 
 // Parse command
