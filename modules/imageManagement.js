@@ -32,32 +32,6 @@ export function checkForAllowedImages(constraintTemplates) {
 }
 
 //
-// Checks for 'no privileged containers' policy
-//
-export function checkForNoPrivilegedContainers(constraintTemplates) {
-
-  console.log(chalk.white("Checking for 'No privileged containers' policy..."));
-
-  // Check if no privileged containers constraint is defined
-  var constraintDefined = constraintTemplates
-    .items
-    .some(x => equalsIgnoreCase(x.metadata.name, 'k8sazurecontainernoprivilege'));
-
-  // Log output
-  if (!constraintDefined) {
-    console.log(chalk.red(`--- 'No privileged containers' policy not applied`));
-  } else {
-    console.log(chalk.green("--- 'No privileged containers' policy applied"));
-  }
-
-  return {
-    checkId: 'IMG-2', //TODO What's the matching code?
-    status: constraintDefined.length? ResultStatus.Pass: ResultStatus.Fail,
-    severity: Severity.High
-  }
-}
-
-//
 // Checks for known runtime container security tools
 //
 export function checkForRuntimeContainerSecurity(pods) {
@@ -182,5 +156,31 @@ export function checkForPrivateEndpointsOnRegistries(containerRegistries) {
     checkId: 'IMG-6',
     status: !problemRegistries.length? ResultStatus.Pass: ResultStatus.Fail,
     severity: Severity.Medium
+  }
+}
+
+//
+// Checks for 'no privileged containers' policy
+//
+export function checkForNoPrivilegedContainers(constraintTemplates) {
+
+  console.log(chalk.white("Checking for 'No privileged containers' policy..."));
+
+  // Check if no privileged containers constraint is defined
+  var constraintDefined = constraintTemplates
+    .items
+    .some(x => equalsIgnoreCase(x.metadata.name, 'k8sazurecontainernoprivilege'));
+
+  // Log output
+  if (!constraintDefined) {
+    console.log(chalk.red(`--- 'No privileged containers' policy not applied`));
+  } else {
+    console.log(chalk.green("--- 'No privileged containers' policy applied"));
+  }
+
+  return {
+    checkId: 'IMG-8',
+    status: constraintDefined.length? ResultStatus.Pass: ResultStatus.Fail,
+    severity: Severity.High
   }
 }
