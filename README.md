@@ -84,11 +84,74 @@ The logs will be stored in the Azure file share.
 
 ### Clean Up
 
-Remove the certificate.
-
 ``` bash
 az group delete -g $RESOURCE_GROUP
 ```
+
+## The Checks
+
+There are about 50+ best-practice recommendations for Azure Kubernetes Service (AKS). This tool helps the discovery and examination of 22 checks. The rest are either not automated yet, or they will never be since they require more context about the business, a conversation, and ultimately a judgement call.
+
+| Check ID    | Manual/Automated | Description |
+| ----------- | ---------------- | ---------------- |
+| `DEV-1`     | Automated | Implement a proper liveness probe |
+| `DEV-2`     | Automated | Implement a proper readiness/startup probe |
+| `DEV-3`     | Automated | Implement a proper prestop hook |
+| `DEV-4`     | Automated | Run more than one replica for your deployments |
+| `DEV-5`     | Automated | Apply tags to all resources |
+| `DEV-6`     | Automated | Implement autoscaling of your applications |
+| `DEV-7`     | Automated | Store secrets in azure key vault |
+| `DEV-8`     | Automated | Implement pod identity |
+| `DEV-9`     | Automated | Use kubernetes namespaces |
+| `DEV-10`    | Automated | Setup resource requests and limits on containers |
+| `DEV-11`    | Automated | Specify security context for pods or containers |
+| `DEV-12`    | Manual    | Configure pod disruption budgets |
+| `IMG-1`     | Manual    | Define image security best practices |
+| `IMG-2`     | Manual    | Scan container images during CI/CD pipelines |
+| `IMG-3`     | Automated | Allow pulling containers only from allowed registries |
+| `IMG-4`     | Automated | Enable runtime security for containerized applications |
+| `IMG-5`     | Automated | Configure image pull RBAC for azure container registry |
+| `IMG-6`     | Automated | Isolate azure container registries |
+| `IMG-7`     | Manual    | Utilize minimal base images |
+| `IMG-8`     | Manual    | Forbid the use of privileged containers |
+| `CSP-1`     | Manual    | Logically isolate the cluster |
+| `CSP-2`     | Automated | Isolate the Kubernetes control plane |
+| `CSP-3`     | Automated | Enable Azure AD integration |
+| `CSP-4`     | Automated | Enable cluster autoscaling |
+| `CSP-5`     | Manual    | Ensure nodes are correctly sized |
+| `CSP-6`     | Manual    | Create a process for base image updates |
+| `CSP-7`     | Automated | Ensure the Kubernetes dashboard is not installed |
+| `CSP-8`     | Manual    | Use Azure AD to pull container images |
+| `CSP-9`     | Manual    | Use system and user node pools |
+| `DR-1`      | Manual    | Ensure you can perform a whitespace deployment |
+| `DR-2`      | Automated | Use availability zones for node pools |
+| `DR-3`      | Manual    | Plan for a multi-region deployment |
+| `DR-4`      | Manual    | Use Azure traffic manager for cross-region traffic |
+| `DR-5`      | Automated | Create a storage migration plan |
+| `DR-6`      | Automated | Guarantee SLA for the master control plane |
+| `DR-7`      | Manual    | Container registry has geo-replication |
+| `STOR-1`    | Manual    | Choose the right storage type |
+| `STOR-2`    | Manual    | Size nodes for storage needs |
+| `STOR-3`    | Manual    | Dynamically provision volumes when applicable |
+| `STOR-4`    | Manual    | Secure and back up your data |
+| `STOR-5`    | Manual    | Remove service state from inside containers |
+| `NET-1`     | Manual    | Choose an appropriate network model |
+| `NET-2`     | Manual    | Plan IP addressing carefully |
+| `NET-3`     | Manual    | Distribute ingress traffic |
+| `NET-4`     | Manual    | Secure exposed endpoints with a Web Application Firewall (WAF) |
+| `NET-5`     | Manual    | Don’t expose ingress on public internet if not necessary |
+| `NET-6`     | Manual    | Control traffic flow with network policies |
+| `NET-7`     | Manual    | Route egress traffic through a firewall |
+| `NET-8`     | Manual    | Do not expose worker nodes to public internet |
+| `CSM-1`     | Manual    | Keep Kubernetes version up to date |
+| `CSM-2`     | Manual    | Keep nodes up to date and patched |
+| `CSM-3`     | Manual    | Monitor cluster security using Azure Security Center |
+| `CSM-4`     | Manual    | Provision a log aggregation tool |
+| `CSM-5`     | Manual    | Enable master node logs |
+| `CSM-6`     | Manual    | Collect metrics |
+| `CSM-7`     | Manual    | Configure distributed tracing |
+| `CSM-8`     | Manual    | Enable Azure Policy |
+
 
 ## Developing
 
