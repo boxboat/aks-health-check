@@ -23,7 +23,7 @@ export function checkForAuthorizedIpRanges(clusterDetails) {
     }
 
     return {
-      checkId: 'CSP-1',
+      checkId: 'CSP-2',
       status: authorizedIpRangesConfigured? ResultStatus.Pass: ResultStatus.Fail,
       severity: Severity.High
     }
@@ -32,7 +32,7 @@ export function checkForAuthorizedIpRanges(clusterDetails) {
     console.log(chalk.red(`EXCEPTION: ${e}`));
 
     return {
-      checkId: 'CSP-1',
+      checkId: 'CSP-2',
       status: ResultStatus.NotApply,
       severity: Severity.High
     }
@@ -58,7 +58,7 @@ export function checkForManagedAadIntegration(clusterDetails) {
   }
 
   return {
-    checkId: 'CSP-2',
+    checkId: 'CSP-3',
     status: aadIntegrationConfigured? ResultStatus.Pass: ResultStatus.Fail,
     severity: Severity.High
   }
@@ -82,7 +82,7 @@ export function checkForAutoscale(clusterDetails) {
   }
 
   return {
-    checkId: 'CSP-3',
+    checkId: 'CSP-4',
     status: autoscaleConfigured? ResultStatus.Pass: ResultStatus.Fail,
     severity: Severity.Medium
   }
@@ -108,7 +108,7 @@ export function checkForKubernetesDashboard(pods) {
   }
 
   return {
-    checkId: 'CSP-4',
+    checkId: 'CSP-7',
     status: !dashboardInstalled? ResultStatus.Pass: ResultStatus.Fail,
     severity: Severity.High
   }
