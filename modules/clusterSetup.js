@@ -115,30 +115,6 @@ export function checkForKubernetesDashboard(pods) {
 }
 
 //
-// Check if a cluster has multiple node pools
-//
-export function checkForMultipleNodePools(clusterDetails) {
-
-  console.log(chalk.white("Checking for multiple node pools on cluster..."));
-
-  // Check if multiple node pools are configured
-  var multipleNodePoolsConfigured = clusterDetails.agentPoolProfiles.length > 1;
-
-  // Log output
-  if (!multipleNodePoolsConfigured) {
-    console.log(chalk.red(`--- Only one node pool exists on the cluster`));
-  } else {
-    console.log(chalk.green("--- Multiple node pools exist on the cluster"));
-  }
-
-  return {
-    checkId: 'CSP-5',
-    status: multipleNodePoolsConfigured? ResultStatus.Pass: ResultStatus.Fail,
-    severity: Severity.Medium
-  }
-}
-
-//
 // Checks for the existence of the most popular service meshes
 //
 export function checkForServiceMesh(deployments, pods) {
@@ -185,8 +161,32 @@ export function checkForServiceMesh(deployments, pods) {
   }
 
   return {
-    checkId: 'CSP-5',
+    checkId: 'CSP-8',
     status: ResultStatus.NotApply,
     severity: Severity.Informational
+  }
+}
+
+//
+// Check if a cluster has multiple node pools
+//
+export function checkForMultipleNodePools(clusterDetails) {
+
+  console.log(chalk.white("Checking for multiple node pools on cluster..."));
+
+  // Check if multiple node pools are configured
+  var multipleNodePoolsConfigured = clusterDetails.agentPoolProfiles.length > 1;
+
+  // Log output
+  if (!multipleNodePoolsConfigured) {
+    console.log(chalk.red(`--- Only one node pool exists on the cluster`));
+  } else {
+    console.log(chalk.green("--- Multiple node pools exist on the cluster"));
+  }
+
+  return {
+    checkId: 'CSP-9',
+    status: multipleNodePoolsConfigured? ResultStatus.Pass: ResultStatus.Fail,
+    severity: Severity.Medium
   }
 }
