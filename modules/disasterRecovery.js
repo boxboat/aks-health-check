@@ -23,32 +23,8 @@ export function checkForAvailabilityZones(clusterDetails) {
   }
 
   return {
-    checkId: 'DR-1',
-    status: !agentPoolsWithNoAzs.length? ResultStatus.Pass: ResultStatus.Fail,
-    severity: Severity.High
-  }
-}
-
-//
-// Checks if the control plane is configured for an SLA
-//
-export function checkForControlPlaneSla(clusterDetails) {
-
-  console.log(chalk.white("Checking for SLA for control plane..."));
-
-  // Check if SLA is configured for the management plane
-  var slaConfigured = clusterDetails.sku.tier == "Paid";
-
-  // Log output
-  if (!slaConfigured) {
-    console.log(chalk.red(`--- An SLA has not been configured for the control plane`));
-  } else {
-    console.log(chalk.green("--- An SLA has been configured for the control plane"));
-  }
-
-  return {
     checkId: 'DR-2',
-    status: slaConfigured.length? ResultStatus.Pass: ResultStatus.Fail,
+    status: !agentPoolsWithNoAzs.length? ResultStatus.Pass: ResultStatus.Fail,
     severity: Severity.High
   }
 }
@@ -73,8 +49,32 @@ export function checkForVelero(pods) {
   }
 
   return {
-    checkId: 'DR-3',
+    checkId: 'DR-5',
     status: veleroInstalled.length? ResultStatus.Pass: ResultStatus.Fail,
     severity: Severity.Medium
+  }
+}
+
+//
+// Checks if the control plane is configured for an SLA
+//
+export function checkForControlPlaneSla(clusterDetails) {
+
+  console.log(chalk.white("Checking for SLA for control plane..."));
+
+  // Check if SLA is configured for the management plane
+  var slaConfigured = clusterDetails.sku.tier == "Paid";
+
+  // Log output
+  if (!slaConfigured) {
+    console.log(chalk.red(`--- An SLA has not been configured for the control plane`));
+  } else {
+    console.log(chalk.green("--- An SLA has been configured for the control plane"));
+  }
+
+  return {
+    checkId: 'DR-6',
+    status: slaConfigured.length? ResultStatus.Pass: ResultStatus.Fail,
+    severity: Severity.High
   }
 }

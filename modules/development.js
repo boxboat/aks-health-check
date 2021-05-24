@@ -83,7 +83,7 @@ export function checkForStartupProbes(pods) {
   }
 
   return {
-    checkId: 'DEV-3',
+    checkId: 'DEV-2',
     status: !podsWithoutStartupProbes.length? ResultStatus.Pass: ResultStatus.Fail,
     severity: Severity.Medium
   }

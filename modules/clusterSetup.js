@@ -23,7 +23,7 @@ export function checkForAuthorizedIpRanges(clusterDetails) {
     }
 
     return {
-      checkId: 'CSP-1',
+      checkId: 'CSP-2',
       status: authorizedIpRangesConfigured? ResultStatus.Pass: ResultStatus.Fail,
       severity: Severity.High
     }
@@ -32,7 +32,7 @@ export function checkForAuthorizedIpRanges(clusterDetails) {
     console.log(chalk.red(`EXCEPTION: ${e}`));
 
     return {
-      checkId: 'CSP-1',
+      checkId: 'CSP-2',
       status: ResultStatus.NotApply,
       severity: Severity.High
     }
@@ -58,7 +58,7 @@ export function checkForManagedAadIntegration(clusterDetails) {
   }
 
   return {
-    checkId: 'CSP-2',
+    checkId: 'CSP-3',
     status: aadIntegrationConfigured? ResultStatus.Pass: ResultStatus.Fail,
     severity: Severity.High
   }
@@ -82,7 +82,7 @@ export function checkForAutoscale(clusterDetails) {
   }
 
   return {
-    checkId: 'CSP-3',
+    checkId: 'CSP-4',
     status: autoscaleConfigured? ResultStatus.Pass: ResultStatus.Fail,
     severity: Severity.Medium
   }
@@ -108,33 +108,9 @@ export function checkForKubernetesDashboard(pods) {
   }
 
   return {
-    checkId: 'CSP-4',
+    checkId: 'CSP-7',
     status: !dashboardInstalled? ResultStatus.Pass: ResultStatus.Fail,
     severity: Severity.High
-  }
-}
-
-//
-// Check if a cluster has multiple node pools
-//
-export function checkForMultipleNodePools(clusterDetails) {
-
-  console.log(chalk.white("Checking for multiple node pools on cluster..."));
-
-  // Check if multiple node pools are configured
-  var multipleNodePoolsConfigured = clusterDetails.agentPoolProfiles.length > 1;
-
-  // Log output
-  if (!multipleNodePoolsConfigured) {
-    console.log(chalk.red(`--- Only one node pool exists on the cluster`));
-  } else {
-    console.log(chalk.green("--- Multiple node pools exist on the cluster"));
-  }
-
-  return {
-    checkId: 'CSP-5',
-    status: multipleNodePoolsConfigured? ResultStatus.Pass: ResultStatus.Fail,
-    severity: Severity.Medium
   }
 }
 
@@ -185,8 +161,32 @@ export function checkForServiceMesh(deployments, pods) {
   }
 
   return {
-    checkId: 'CSP-5',
+    checkId: 'CSP-8',
     status: ResultStatus.NotApply,
     severity: Severity.Informational
+  }
+}
+
+//
+// Check if a cluster has multiple node pools
+//
+export function checkForMultipleNodePools(clusterDetails) {
+
+  console.log(chalk.white("Checking for multiple node pools on cluster..."));
+
+  // Check if multiple node pools are configured
+  var multipleNodePoolsConfigured = clusterDetails.agentPoolProfiles.length > 1;
+
+  // Log output
+  if (!multipleNodePoolsConfigured) {
+    console.log(chalk.red(`--- Only one node pool exists on the cluster`));
+  } else {
+    console.log(chalk.green("--- Multiple node pools exist on the cluster"));
+  }
+
+  return {
+    checkId: 'CSP-9',
+    status: multipleNodePoolsConfigured? ResultStatus.Pass: ResultStatus.Fail,
+    severity: Severity.Medium
   }
 }
