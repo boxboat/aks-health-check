@@ -12,8 +12,8 @@ import * as ClusterSetup from './modules/clusterSetup.js';
 import * as DisasterRecovery from './modules/disasterRecovery.js';
 import { equalsIgnoreCase } from './helpers/stringCompare.js';
 
-function showTableFromResults(results){
-  const transformed = results.reduce((re, {checkId, ...x}) => { re[checkId] = x; return re}, {})
+function showTableFromResults(results) {
+  const transformed = results.reduce((re, { checkId, ...x }) => { re[checkId] = x; return re }, {})
   console.table(transformed);
 }
 
@@ -22,7 +22,7 @@ async function checkAzure(options) {
 
   setupGlobals(options);
 
-  if (options.dryRun === undefined) ; // No dry run
+  if (options.dryRun === undefined); // No dry run
   else if (options.dryRun === true) console.log('Dry run coming soon. (mode: fail)');
   else console.log(`Dry run coming soon. (mode: ${options.dryRun})`);
 
@@ -73,7 +73,7 @@ async function checkAzure(options) {
   results.push(ImageManagement.checkForPrivateEndpointsOnRegistries(containerRegistries));
   results.push(await ImageManagement.checkForAksAcrRbacIntegration(clusterDetails, containerRegistries));
 
-  showTableFromResults(results);
+  return results;
 }
 
 async function checkKubernetes(options) {
@@ -81,7 +81,7 @@ async function checkKubernetes(options) {
 
   setupGlobals(options);
 
-  if (options.dryRun === undefined) ; // No dry run
+  if (options.dryRun === undefined); // No dry run
   else if (options.dryRun === true) console.log('Dry run coming soon. (mode: fail)');
   else console.log(`Dry run coming soon. (mode: ${options.dryRun})`);
 
@@ -122,7 +122,7 @@ async function checkKubernetes(options) {
   }
 
   let results = [];
-  
+
   // Check development items
   console.log();
   console.log(chalk.bgWhite(chalk.black('               Scanning Development Items               ')));
@@ -159,7 +159,7 @@ async function checkKubernetes(options) {
   console.log(chalk.bgWhite(chalk.black('               Scanning Disaster Recovery Items               ')));
   results.push(DisasterRecovery.checkForVelero(pods));
 
-  showTableFromResults(results);
+  return results;
 }
 
 //
@@ -173,8 +173,9 @@ function setupGlobals(options) {
 // Main function
 //
 async function main(options) {
-  await checkAzure(options);
-  await checkKubernetes(options);
+  var results = await checkAzure(options);
+  results.concat(await checkKubernetes(options));
+  return results;
 }
 
 // Build up the program
@@ -206,14 +207,17 @@ program
   Check for best practices against an Azure Kubernetes Service (AKS) cluster.`
   );
 
-const check = program.command('check', {isDefault: true});
+const check = program.command('check', { isDefault: true });
 check
   .command('azure')
   .requiredOption('-g, --resource-group <group>', 'Resource group of AKS cluster')
   .requiredOption('-n, --name <name>', 'Name of AKS cluster')
   .option('--dry-run [mode]', "Dry run with mode 'fail' or 'pass'. Defaults to 'fail'. Do not actually perform the checks, just observe results.")
   .option('-v, --verbose', 'Enable verbose console logging')
-  .action(checkAzure);
+  .action(async (options) => {
+    var results = await checkAzure(options);
+    showTableFromResults(results);
+  });
 
 check
   .command('kubernetes')
@@ -221,17 +225,23 @@ check
   .option('--dry-run [mode]', "Dry run with mode 'fail' or 'pass'. Defaults to 'fail'. Do not actually perform the checks, just observe results.")
   .option('-i, --ignore-namespaces <namespaces>', 'A comma-separated list of namespaces to ignore when doing analysis')
   .option('-v, --verbose', 'Enable verbose console logging')
-  .action(checkKubernetes);
+  .action(async (options) => {
+    var results = await checkKubernetes(options);
+    showTableFromResults(results);
+  });
 
 check
-  .command('all', {isDefault: true})
+  .command('all', { isDefault: true })
   .requiredOption('-g, --resource-group <group>', 'Resource group of AKS cluster')
   .requiredOption('-n, --name <name>', 'Name of AKS cluster')
   .option('-r, --image-registries <registries>', 'A comma-separated list of Azure Container Registry names used with the cluster')
   .option('--dry-run [mode]', "Dry run with mode 'fail' or 'pass'. Defaults to 'fail'. Do not actually perform the checks, just observe results.")
   .option('-i, --ignore-namespaces <namespaces>', 'A comma-separated list of namespaces to ignore when doing analysis')
   .option('-v, --verbose', 'Enable verbose console logging')
-  .action(main);
+  .action(async (options) => {
+    var results = await main(options);
+    showTableFromResults(results);
+  });
 
 // Parse command
 program.parse(process.argv);
