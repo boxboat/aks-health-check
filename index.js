@@ -12,6 +12,11 @@ import * as ClusterSetup from './modules/clusterSetup.js';
 import * as DisasterRecovery from './modules/disasterRecovery.js';
 import { equalsIgnoreCase } from './helpers/stringCompare.js';
 
+function showTableFromResults(results){
+  const transformed = results.reduce((re, {checkId, ...x}) => { re[checkId] = x; return re}, {})
+  console.table(transformed);
+}
+
 async function checkAzure(options) {
   await executeCommand("az");
 
@@ -68,8 +73,7 @@ async function checkAzure(options) {
   results.push(ImageManagement.checkForPrivateEndpointsOnRegistries(containerRegistries));
   results.push(await ImageManagement.checkForAksAcrRbacIntegration(clusterDetails, containerRegistries));
 
-  const transformed = results.reduce((re, {checkId, ...x}) => { re[checkId] = x; return re}, {})
-  console.table(transformed);
+  showTableFromResults(results);
 }
 
 async function checkKubernetes(options) {
@@ -155,8 +159,7 @@ async function checkKubernetes(options) {
   console.log(chalk.bgWhite(chalk.black('               Scanning Disaster Recovery Items               ')));
   results.push(DisasterRecovery.checkForVelero(pods));
 
-  const transformed = results.reduce((re, {checkId, ...x}) => { re[checkId] = x; return re}, {})
-  console.table(transformed);
+  showTableFromResults(results);
 }
 
 //
