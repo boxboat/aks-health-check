@@ -11,6 +11,7 @@ import * as ImageManagement from './modules/imageManagement.js';
 import * as ClusterSetup from './modules/clusterSetup.js';
 import * as DisasterRecovery from './modules/disasterRecovery.js';
 import { equalsIgnoreCase } from './helpers/stringCompare.js';
+import * as CheckDefinitions from './checks-definition.js';
 
 //
 // Sort the results from checks by the Check ID. Then show a table.
@@ -19,6 +20,8 @@ function showTableFromResults(results) {
   let sortedResults = results.sort((a,b) => a.checkId > b.checkId? 1: -1);
   const transformed = sortedResults.reduce((re, { checkId, ...x }) => { re[checkId] = x; return re }, {})
   console.table(transformed);
+
+  
 }
 
 async function checkAzure(options) {
