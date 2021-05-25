@@ -21,7 +21,16 @@ function showTableFromResults(results) {
   const transformed = sortedResults.reduce((re, { checkId, ...x }) => { re[checkId] = x; return re }, {})
   console.table(transformed);
 
-  
+  let prettyResults = CheckDefinitions;
+  let what = prettyResults[0];
+  prettyResults = prettyResults.map((check)=> {
+    checkId: check.checkId
+    Status: "todo"
+    Severity: "todo"
+    Description: check.description
+  });
+
+  console.log(prettyResults);
 }
 
 async function checkAzure(options) {
