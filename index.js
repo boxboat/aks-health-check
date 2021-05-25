@@ -11,26 +11,33 @@ import * as ImageManagement from './modules/imageManagement.js';
 import * as ClusterSetup from './modules/clusterSetup.js';
 import * as DisasterRecovery from './modules/disasterRecovery.js';
 import { equalsIgnoreCase } from './helpers/stringCompare.js';
-import * as CheckDefinitions from './checks-definition.js';
+import * as fs from 'fs';
+import { ResultStatus } from './helpers/commandStatus.js';
+import { Severity } from './helpers/commandSeverity.js';
 
 //
 // Sort the results from checks by the Check ID. Then show a table.
 //
 function showTableFromResults(results) {
-  let sortedResults = results.sort((a,b) => a.checkId > b.checkId? 1: -1);
-  const transformed = sortedResults.reduce((re, { checkId, ...x }) => { re[checkId] = x; return re }, {})
-  console.table(transformed);
+  // let sortedResults = results.sort((a,b) => a.checkId > b.checkId? 1: -1);
+  // const transformed = sortedResults.reduce((re, { checkId, ...x }) => { re[checkId] = x; return re }, {})
+  // console.table(transformed);
 
-  let prettyResults = CheckDefinitions;
-  let what = prettyResults[0];
-  prettyResults = prettyResults.map((check)=> {
-    checkId: check.checkId
-    Status: "todo"
-    Severity: "todo"
-    Description: check.description
+  let rawData = fs.readFileSync('./checks-definition.json');
+  const checkDefinitions = JSON.parse(rawData);
+
+  let prettyResults = checkDefinitions.map((check)=> {
+
+    var result = results.find(x => x.checkId == check.checkId);
+    return {
+      CheckId: check.checkId,
+      Status: result? result.status: ResultStatus.NeedsManualInspection,
+      Severity: result? result.severity: Severity.Unknown,
+      Description: check.description
+    }
   });
 
-  console.log(prettyResults);
+  console.table(prettyResults);
 }
 
 async function checkAzure(options) {

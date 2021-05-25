@@ -3,6 +3,7 @@ export const ResultStatus = Object.freeze(
     { 
         "Pass": true, 
         "Fail": false, 
-        "NotApply": undefined 
+        "NotApply": undefined,
+        "NeedsManualInspection": "[needs inspection]"
     }
 )
