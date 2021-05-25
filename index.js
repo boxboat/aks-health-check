@@ -13,7 +13,8 @@ import * as DisasterRecovery from './modules/disasterRecovery.js';
 import { equalsIgnoreCase } from './helpers/stringCompare.js';
 
 function showTableFromResults(results) {
-  const transformed = results.reduce((re, { checkId, ...x }) => { re[checkId] = x; return re }, {})
+  let sortedResults = results.sort((a,b) => a.checkId > b.checkId? 1: -1);
+  const transformed = sortedResults.reduce((re, { checkId, ...x }) => { re[checkId] = x; return re }, {})
   console.table(transformed);
 }
 
@@ -173,9 +174,8 @@ function setupGlobals(options) {
 // Main function
 //
 async function main(options) {
-  var results = await checkAzure(options);
-  results.concat(await checkKubernetes(options));
-  return results;
+  var results = await checkAzure(options);  
+  return results.concat(await checkKubernetes(options));
 }
 
 // Build up the program
