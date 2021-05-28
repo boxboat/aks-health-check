@@ -63,7 +63,6 @@ function showTableFromResults(results) {
   console.log(chalk.bgBlueBright('                                                              '));
   console.log(chalk.blue(`
   ${boxboat}
-  ResultStatus
   ${chalk.blueBright.bold("BoxBoat's AKS Health Check Results")}
   Total checks that passed: ${chalk.green(resultsThatPassedCount)}/${chalk.blueBright(resultsRanCount)} => ${chalk.magenta(score + '%')}
   Total checks that failed: ${chalk.red(resultsThatFailedCount)}/${chalk.blueBright(resultsRanCount)}
