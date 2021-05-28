@@ -49,7 +49,8 @@ function showTableFromResults(results) {
       CheckId: check.checkId,
       Status: result? result.status: ResultStatus.NeedsManualInspection,
       Severity: result? result.severity: Severity.Unknown,
-      Description: check.description
+      Description: check.description,
+      Details: result? result.details: []
     }
   });
 
@@ -86,11 +87,33 @@ function showTableFromResults(results) {
         console.log(`${i + 1}. ${chalk.bgRed.white.bold(result.CheckId)} ${msgBody}`);
         break;
       case ResultStatus.NotApply:
-        console.log(`${i + 1}. ${chalk.bgRed.white.bold(result.CheckId)} ${msgBody}`);
+        console.log(`${i + 1}. ${chalk.white.bold(result.CheckId)} ${msgBody}`);
         break;
       case ResultStatus.NeedsManualInspection:
-        console.log(`${i + 1}. ${chalk.gray.gray.bold(result.CheckId)} ${msgBody}`);
+        console.log(`${i + 1}. ${chalk.gray.bold(result.CheckId)} ${msgBody}`);
         break;
+    }
+
+    // Additional details that are nested
+    if (result.Details){
+      for (let j = 0; j < result.Details.length; j++) {
+        
+        let nestedMsgTemplate = `    +------ ${result.Details[j].message}`;
+        switch (result.Status){
+          case ResultStatus.Pass:
+            console.log(chalk.green(nestedMsgTemplate));
+            break;
+          case ResultStatus.Fail:
+            console.log(chalk.red(nestedMsgTemplate));
+            break;
+          case ResultStatus.NotApply:
+            console.log(chalk.white(nestedMsgTemplate));
+            break;
+          case ResultStatus.NeedsManualInspection:
+            console.log(chalk.gray(nestedMsgTemplate));
+            break;
+        }
+      }
     }
   }
 }
