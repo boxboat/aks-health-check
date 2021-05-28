@@ -15,14 +15,30 @@ import * as fs from 'fs';
 import { ResultStatus } from './helpers/commandStatus.js';
 import { Severity } from './helpers/commandSeverity.js';
 
+const boxboat = `
+                .,,,,* ,,,,,                                  
+                .,,,,, ,,,,,                                                        
+          ,,,,,..,,,,, ,,,,, ,,,,,                            
+          ,,,,,..,,,,* ,,,,, ,,,,,                            
+    ,,,,, ,,,,,..,,,,, ,,,,, ,,,,, ,,,,,,                     
+    ,,,,, ,,,,,..,,,*(%(,,,, ,,,,, ,,,,,,                     
+                /((((((%%%%%%%,                                
+    ,,,,,,((((((((((((%%%%%%%%%%%%#*,,,,,                     
+    .((((((((((((((((((%%%%%%%%%%%%%%%%%%/                     
+((((((((((((((((((((((%%%%%%%%%%%%%%%%%%%%%%.                 
+  #((((((((((((((((((((%%%%%%%%%%%%%%%%%%%%%,                  
+    ((((((((((((((((((((%%%%%%%%%%%%%%%%%%%%                    
+    ,((((((((((((((((((%%%%%%%%%%%%%%%%%%%                     
+      (((((((((((((((((%%%%%%%%%%%%%%%%%#                      
+      ((((((((((((((((%%%%%%%%%%%%%%%%(                       
+        #(((((#((((((((%%%%%%%%%%%%%%%,                        
+    ,,, /#, ,,, .##  ,,, /%# .,,. #%  ,,,   
+`;
+
 //
 // Sort the results from checks by the Check ID. Then show a table.
 //
 function showTableFromResults(results) {
-  // let sortedResults = results.sort((a,b) => a.checkId > b.checkId? 1: -1);
-  // const transformed = sortedResults.reduce((re, { checkId, ...x }) => { re[checkId] = x; return re }, {})
-  // console.table(transformed);
-
   let rawData = fs.readFileSync('./checks-definition.json');
   const checkDefinitions = JSON.parse(rawData);
 
@@ -37,7 +53,47 @@ function showTableFromResults(results) {
     }
   });
 
-  console.table(prettyResults);
+  let resultsRanCount = prettyResults.filter(result => result.Status != ResultStatus.NeedsManualInspection).length
+  let resultsThatFailedCount = prettyResults.filter(result => result.Status == ResultStatus.Fail).length
+  let resultsThatPassedCount = prettyResults.filter(result => result.Status == ResultStatus.Pass).length
+  let manualChecksCount = prettyResults.filter(result => result.Status == ResultStatus.NeedsManualInspection).length
+  let score = Math.round((resultsThatPassedCount/resultsRanCount)*100)
+
+  console.log();
+  console.log(chalk.bgBlueBright('                                                              '));
+  console.log(chalk.blue(`
+  ${boxboat}
+  ResultStatus
+  ${chalk.blueBright.bold("BoxBoat's AKS Health Check Results")}
+  Total checks that passed: ${chalk.green(resultsThatPassedCount)}/${chalk.blueBright(resultsRanCount)} => ${chalk.magenta(score + '%')}
+  Total checks that failed: ${chalk.red(resultsThatFailedCount)}/${chalk.blueBright(resultsRanCount)}
+
+  But, there are still ${chalk.yellow(manualChecksCount)} checks that need to be performed manually. 
+  Here's the document 📄 we use at BoxBoat ${chalk.underline('http://bit.ly/boxboat-health-check-report-template')} 
+  Copy it, it should help you keep track of everything.
+  `));
+  console.log(chalk.bgBlueBright('                                                              '));
+  console.log();
+
+  for (let i = 0; i < prettyResults.length; i++) {
+    const result = prettyResults[i];
+    
+    let msgBody = `| ${result.Status} - ${result.Description}`
+    switch (result.Status){
+      case ResultStatus.Pass:
+        console.log(`${i + 1}. ${chalk.bgGreen.white.bold(result.CheckId)} ${msgBody}`);
+        break;
+      case ResultStatus.Fail:
+        console.log(`${i + 1}. ${chalk.bgRed.white.bold(result.CheckId)} ${msgBody}`);
+        break;
+      case ResultStatus.NotApply:
+        console.log(`${i + 1}. ${chalk.bgRed.white.bold(result.CheckId)} ${msgBody}`);
+        break;
+      case ResultStatus.NeedsManualInspection:
+        console.log(`${i + 1}. ${chalk.gray.gray.bold(result.CheckId)} ${msgBody}`);
+        break;
+    }
+  }
 }
 
 async function checkAzure(options) {
@@ -205,24 +261,8 @@ const program = new Command();
 program
   .name('aks-hc')
   .description(`
-  
-                  .,,,,* ,,,,,                                  
-                  .,,,,, ,,,,,                                                        
-            ,,,,,..,,,,, ,,,,, ,,,,,                            
-            ,,,,,..,,,,* ,,,,, ,,,,,                            
-      ,,,,, ,,,,,..,,,,, ,,,,, ,,,,, ,,,,,,                     
-      ,,,,, ,,,,,..,,,*(%(,,,, ,,,,, ,,,,,,                     
-                  /((((((%%%%%%%,                                
-      ,,,,,,((((((((((((%%%%%%%%%%%%#*,,,,,                     
-      .((((((((((((((((((%%%%%%%%%%%%%%%%%%/                     
-  ((((((((((((((((((((((%%%%%%%%%%%%%%%%%%%%%%.                 
-    #((((((((((((((((((((%%%%%%%%%%%%%%%%%%%%%,                  
-     ((((((((((((((((((((%%%%%%%%%%%%%%%%%%%%                    
-      ,((((((((((((((((((%%%%%%%%%%%%%%%%%%%                     
-        (((((((((((((((((%%%%%%%%%%%%%%%%%#                      
-        ((((((((((((((((%%%%%%%%%%%%%%%%(                       
-          #(((((#((((((((%%%%%%%%%%%%%%%,                        
-      ,,, /#, ,,, .##  ,,, /%# .,,. #%  ,,,   
+
+  ${boxboat}
   
   BoxBoat's AKS Health Check
 
