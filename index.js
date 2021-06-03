@@ -229,7 +229,7 @@ async function checkKubernetes(options) {
   // Check cluster setup items
   console.log();
   console.log(chalk.bgWhite(chalk.black('               Scanning Cluster Setup Items               ')));
-  results.push(ClusterSetup.checkForKubernetesDashboard(pods));
+  results.push(await ClusterSetup.checkForKubernetesDashboard(pods));
   results.push(ClusterSetup.checkForServiceMesh(deployments, pods));
 
   // Check disaster recovery items

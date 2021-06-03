@@ -2,6 +2,7 @@ import chalk from "chalk"
 import { equalsIgnoreCase } from '../helpers/stringCompare.js';
 import { ResultStatus } from '../helpers/commandStatus.js';
 import { Severity } from '../helpers/commandSeverity.js';
+import { executeCommand } from '../helpers/commandHelpers.js';
 
 //
 // Checks if the cluster master has authorized ip ranges set
@@ -91,14 +92,17 @@ export function checkForAutoscale(clusterDetails) {
 //
 // Checks for the Kubernetes dashboard
 //
-export function checkForKubernetesDashboard(pods) {
+export async function checkForKubernetesDashboard() {
 
   console.log(chalk.white("Checking for Kubernetes dashboard..."));
 
+  // Because it's possible the namespace containing the dashboard was filtered out
+  // we should check all namespaces in the cluster for it
+  var commandResults = await executeCommand('kubectl get deployments -A --field-selector metadata.name=kubernetes-dashboard -o json');
+  var commandJson = JSON.parse(commandResults.stdout);
+
   // Determine if dashboard is installed
-  var dashboardInstalled = pods
-    .items
-    .some(pod => pod.spec.containers.some(con => equalsIgnoreCase(con.name, "kubernetes-dashboard")));
+  var dashboardInstalled = commandJson.items.length > 0;
 
   // Log output
   if (dashboardInstalled) {
