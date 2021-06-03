@@ -1,9 +1,9 @@
 
 export const ResultStatus = Object.freeze(
     { 
-        Pass: '✅', 
-        Fail: '❌', 
-        NotApply: '⚫' ,
-        NeedsManualInspection: '👀'
+        Pass: 'PASS', 
+        Fail: 'FAIL', 
+        NotApply: 'N/A' ,
+        NeedsManualInspection: 'INSPECTION REQUIRED'
     }
 )
