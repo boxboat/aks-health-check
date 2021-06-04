@@ -141,6 +141,18 @@ export function checkForPrivateEndpointsOnRegistries(containerRegistries) {
 
   console.log(chalk.white("Checking for private endpoints on container registries..."));
 
+  // If there are no container registries the test does not apply
+  if (!containerRegistries.length) {
+
+    console.log(chalk.gray("--- No registries were specified. Skipping check"));
+
+    return {
+      checkId: 'IMG-6',
+      status: ResultStatus.NotApply,
+      severity: Severity.Medium
+    }
+  }
+
   // Grab all registries without private endpoints
   var problemRegistries = containerRegistries
     .filter(x => x.privateEndpointConnections.length == 0);
