@@ -10,6 +10,8 @@ import { executeCommand } from '../helpers/commandHelpers.js';
 export function checkForAuthorizedIpRanges(clusterDetails) {
   console.log(chalk.white("Checking for authorized ip ranges..."));
 
+  let details = []
+
   try {
     // Check if authorized ip ranges is non-null
     var authorizedIpRangesConfigured = (clusterDetails
@@ -18,15 +20,22 @@ export function checkForAuthorizedIpRanges(clusterDetails) {
 
     // Log output
     if (!authorizedIpRangesConfigured) {
-      console.log(chalk.red(`--- Authorized IP Ranges are not configured for the API server`));
+      details.push({
+        status:  ResultStatus.Fail,
+        message: "Authorized IP Ranges are not configured for the API server"}
+        );
     } else {
-      console.log(chalk.green("--- Authorized IP Ranges are configured for the API server"));
+      details.push({
+        status:  ResultStatus.Pass,
+        message: "Authorized IP Ranges are configured for the API server"}
+        );
     }
 
     return {
       checkId: 'CSP-2',
       status: authorizedIpRangesConfigured? ResultStatus.Pass: ResultStatus.Fail,
-      severity: Severity.High
+      severity: Severity.High,
+      details: details
     }
   }
   catch (e) {
@@ -48,20 +57,30 @@ export function checkForManagedAadIntegration(clusterDetails) {
 
   console.log(chalk.white("Checking for Managed Azure Active Directory integration..."));
 
+  let details = [];
+
   // Check if managed aad integration is configured
   var aadIntegrationConfigured = clusterDetails.aadProfile && clusterDetails.aadProfile.managed;
 
   // Log output
   if (!aadIntegrationConfigured) {
-    console.log(chalk.red(`--- Managed Azure Active Directory integration is not configured`));
-  } else {
-    console.log(chalk.green("--- Managed Azure Active Direectory integration is configured"));
+    details.push({
+      status:  ResultStatus.Fail,
+      message: "Managed Azure Active Directory integration is not configured"}
+      );
+  }
+  else {
+    details.push({
+      status:  ResultStatus.Pass,
+      message: "Managed Azure Active Direectory integration is configured"}
+      );
   }
 
   return {
     checkId: 'CSP-3',
     status: aadIntegrationConfigured? ResultStatus.Pass: ResultStatus.Fail,
-    severity: Severity.High
+    severity: Severity.High,
+    details: details
   }
 }
 
@@ -72,20 +91,29 @@ export function checkForAutoscale(clusterDetails) {
 
   console.log(chalk.white("Checking for Autoscale on cluster..."));
 
+  let details = [];
+
   // Check if autoscale is configured
   var autoscaleConfigured = clusterDetails.agentPoolProfiles.some(x => x.enableAutoScaling);
 
   // Log output
   if (!autoscaleConfigured) {
-    console.log(chalk.red(`--- Autoscale is not configured`));
+    details.push({
+      status:  ResultStatus.Fail,
+      message: "Autoscale is not configured"}
+      );
   } else {
-    console.log(chalk.green("--- Autoscale is configured"));
+    details.push({
+      status:  ResultStatus.Pass,
+      message: "Autoscale is configured"}
+      );
   }
 
   return {
     checkId: 'CSP-4',
     status: autoscaleConfigured? ResultStatus.Pass: ResultStatus.Fail,
-    severity: Severity.Medium
+    severity: Severity.Medium,
+    details: details
   }
 }
 
@@ -100,21 +128,29 @@ export async function checkForKubernetesDashboard() {
   // we should check all namespaces in the cluster for it
   var commandResults = await executeCommand('kubectl get deployments -A --field-selector metadata.name=kubernetes-dashboard -o json');
   var commandJson = JSON.parse(commandResults.stdout);
+  let details = [];
 
   // Determine if dashboard is installed
   var dashboardInstalled = commandJson.items.length > 0;
 
   // Log output
   if (dashboardInstalled) {
-    console.log(chalk.red(`--- Kubernetes dashboard is installed`));
+    details.push({
+      status:  ResultStatus.Fail,
+      message: "Kubernetes dashboard is installed"}
+      );
   } else {
-    console.log(chalk.green("--- Kubernetes dashboard is not installed"));
+    details.push({
+      status:  ResultStatus.Pass,
+      message: "Kubernetes dashboard is not installed"}
+      );
   }
 
   return {
     checkId: 'CSP-7',
     status: !dashboardInstalled? ResultStatus.Pass: ResultStatus.Fail,
-    severity: Severity.High
+    severity: Severity.High,
+    details: details
   }
 }
 
@@ -124,6 +160,8 @@ export async function checkForKubernetesDashboard() {
 export function checkForServiceMesh(deployments, pods) {
 
   console.log(chalk.white("Checking for known service meshes..."));
+
+  let details = [];
 
   // Determine if Traefik-mesh is installed
   var traefikMeshInstalled = deployments
@@ -154,20 +192,33 @@ export function checkForServiceMesh(deployments, pods) {
   // Otherwise log the mesh that was found
   var knownMeshInstalled = traefikMeshInstalled || istioInstalled || consulInstalled || linkerdInstalled || osmInstalled;
   if (!knownMeshInstalled) {
-    console.log(chalk.red(`--- A service mesh was not detected`));
+    details.push({
+      status:  ResultStatus.NotApply,
+      message: "Kubernetes dashboard is not installed"}
+      );
   }
   else {
-    if (traefikMeshInstalled) console.log(chalk.green(`--- Traefik-Mesh was found`));
-    if (istioInstalled) console.log(chalk.green(`--- Istio was found`));
-    if (consulInstalled) console.log(chalk.green(`--- Consul was found`));
-    if (linkerdInstalled) console.log(chalk.green(`--- Linkerd was found`));
-    if (osmInstalled) console.log(chalk.green(`--- Open Service Mesh was found`));
+    let serviceMeshName = ""
+    if (traefikMeshInstalled) serviceMeshName= "Traefik-Mesh";
+    if (istioInstalled) serviceMeshName = "Istio";
+    if (consulInstalled) serviceMeshName="Consul";
+    if (linkerdInstalled) serviceMeshName="Linkerd";
+    if (osmInstalled) serviceMeshName="Open Service Mesh";
+
+    if (serviceMeshName){
+      details.push({
+        status:  ResultStatus.NotApply,
+        message: `${serviceMeshName} was found`}
+        );
+    }
+    
   }
 
   return {
     checkId: 'CSP-8',
     status: ResultStatus.NotApply,
-    severity: Severity.Informational
+    severity: Severity.Informational,
+    details: details
   }
 }
 
@@ -178,19 +229,23 @@ export function checkForMultipleNodePools(clusterDetails) {
 
   console.log(chalk.white("Checking for multiple node pools on cluster..."));
 
+  let details = [];
+
   // Check if multiple node pools are configured
   var multipleNodePoolsConfigured = clusterDetails.agentPoolProfiles.length > 1;
 
   // Log output
   if (!multipleNodePoolsConfigured) {
-    console.log(chalk.red(`--- Only one node pool exists on the cluster`));
-  } else {
-    console.log(chalk.green("--- Multiple node pools exist on the cluster"));
+    details.push({
+      status:  ResultStatus.Fail,
+      message: "Only one node pool exists on the cluster"}
+      );
   }
 
   return {
     checkId: 'CSP-9',
     status: multipleNodePoolsConfigured? ResultStatus.Pass: ResultStatus.Fail,
-    severity: Severity.Medium
+    severity: Severity.Medium,
+    details: details
   }
 }
