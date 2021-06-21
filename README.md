@@ -17,6 +17,8 @@ $ az account set -s <subscription id>
 
 $ az aks get-credentials -g <resource group> -n <cluster name> --admin
 
+$ kubectl get ns
+
 $ aks-hc check all -g <resource group> -n <cluster name> -i ingress-nginx,kube-node-lease,kube-public,kube-system
 
 $ exit
