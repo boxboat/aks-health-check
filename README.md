@@ -8,7 +8,7 @@ This is a client-side tool that uses the Azure CLI to [AKS Best Practice](https:
 ## Option A - Run with Current User
 
 ``` bash
-docker run -it --rm ghcr.io/boxboat/aks-health-check
+docker run -it --network host --rm ghcr.io/boxboat/aks-health-check
 
 # Shell in the container
 $ az login
@@ -17,7 +17,7 @@ $ az account set -s <subscription id>
 
 $ az aks get-credentials -g <resource group> -n <cluster name> --admin
 
-$ aks-hc check all -g <resource group> -n <cluster name>
+$ aks-hc check all -g <resource group> -n <cluster name> -i ingress-nginx,kube-node-lease,kube-public,kube-system
 
 $ exit
 ```
