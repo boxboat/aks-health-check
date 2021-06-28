@@ -7,7 +7,7 @@ This is a client-side tool that uses the Azure CLI and `kubectl` to perform chec
 
 At BoxBoat, we guide our customers with the use of Kubernetes and surrounding ecosystems. To offer the most value possible to our clients, we created a tool to quickly inspect the configuration of an AKS cluster and it's relevant Azure environment. 
 
-There are many [AKS Best Practices](https://www.the-aks-checklist.com/) and some of these are subjective. So, we also have a companion Google Doc template that we use to keep track of results and findings.
+There are many best-practices and some of these are subjective. So, we also have a companion Google Doc template that we use to keep track of results and findings.
 
 📄 [The Google Doc AKS Health Check Template](https://bit.ly/boxboat-health-check-report-template) 📄
 
