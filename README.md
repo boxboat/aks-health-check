@@ -3,9 +3,15 @@
 
 [![Known Vulnerabilities](https://snyk.io/test/github/boxboat/aks-health-check/badge.svg)](https://snyk.io/test/github/boxboat/aks-health-check)
 
-This is a client-side tool that uses the Azure CLI to [AKS Best Practice](https://www.the-aks-checklist.com/) checks against the Azure plane and the Kubernetes plane.
+This is a client-side tool that uses the Azure CLI and `kubectl` to perform checks against the Azure plane and the Kubernetes plane. These checks are well documented on [Microsoft's documentation](https://docs.microsoft.com/en-us/azure/aks/best-practices).
 
-## Option A - Run with Current User
+At BoxBoat, we guide our customers with the use of Kubernetes and surrounding ecosystems. To offer the most value possible to our clients, we created a tool to quickly inspect the configuration of an AKS cluster and it's relevant Azure environment. 
+
+There are many [AKS Best Practices](https://www.the-aks-checklist.com/) and some of these are subjective. So, we also have a companion Google Doc template that we use to keep track of results and findings.
+
+📄 [The Google Doc AKS Health Check Template](https://bit.ly/boxboat-health-check-report-template) 📄
+
+## Option A - Run with Current User (Preferred 🌟)
 
 ``` bash
 docker run -it --network host --rm ghcr.io/boxboat/aks-health-check
