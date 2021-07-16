@@ -106,16 +106,25 @@ export function checkForStartupProbes(pods) {
 
   // Log output
   if (podsWithoutStartupProbes.length) {
-    console.log(chalk.red(`--- Found ${podsWithoutStartupProbes.length} pods without startup probes`));
+    let message = `Found ${podsWithoutStartupProbes.length} pods without startup probes`;
+
     if (global.verbose) {
-      podsWithoutStartupProbes.forEach(x => console.log(chalk.red(`------ ${x.metadata.namespace} - ${x.metadata.name}`)));
+      podsWithoutStartupProbes.forEach(x => message += `${EOL}${space}${x.metadata.namespace}/${x.metadata.name}`);
     }
+
+    details.push({
+      status:  ResultStatus.Fail,
+      message: message}
+      );
   } else {
-    console.log(chalk.green('--- All pods have startup probes'));
+    details.push({
+      status:  ResultStatus.Pass,
+      message: 'All pods have startup probes'}
+      );
   }
 
   return {
-    checkId: 'DEV-2',
+    checkId: 'DEV-2B',
     status: !podsWithoutStartupProbes.length? ResultStatus.Pass: ResultStatus.Fail,
     severity: Severity.Medium,
     details: details
