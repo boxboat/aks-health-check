@@ -457,11 +457,6 @@ export function checkForPodsWithoutRequestsOrLimits(pods) {
 
   // Log output
   if (podsWithNoRequestsOrLimits.length) {
-    console.log(chalk.red(`--- Found ${podsWithNoRequestsOrLimits.length} pods without either resource requests or limits`));
-    if (global.verbose) {
-      podsWithNoRequestsOrLimits.forEach(x => console.log(chalk.red(`------ ${x.metadata.namespace} - ${x.metadata.name}`)));
-    }
-
     let message = `Found ${podsWithNoRequestsOrLimits.length} pods without either resource requests or limits`;
 
     if (global.verbose) {
