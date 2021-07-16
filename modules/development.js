@@ -29,20 +29,22 @@ export function checkForLivenessProbes(pods) {
     }
 
     details.push({
-      status:  ResultStatus.Fail,
-      message: message}
-      );
-    
+      status: ResultStatus.Fail,
+      message: message
+    }
+    );
+
   } else {
     details.push({
-      status:  ResultStatus.Pass,
-      message: 'All pods have liveness probes'}
-      );
+      status: ResultStatus.Pass,
+      message: 'All pods have liveness probes'
+    }
+    );
   }
 
   return {
     checkId: 'DEV-1',
-    status: !podsWithoutLivenessProbes.length? ResultStatus.Pass: ResultStatus.Fail,
+    status: !podsWithoutLivenessProbes.length ? ResultStatus.Pass : ResultStatus.Fail,
     severity: Severity.Medium,
     details: details
   }
@@ -72,19 +74,21 @@ export function checkForReadinessProbes(pods) {
     }
 
     details.push({
-      status:  ResultStatus.Fail,
-      message: message}
-      );
+      status: ResultStatus.Fail,
+      message: message
+    }
+    );
   } else {
     details.push({
-      status:  ResultStatus.Pass,
-      message: 'All pods have readiness probes'}
-      );
+      status: ResultStatus.Pass,
+      message: 'All pods have readiness probes'
+    }
+    );
   }
 
   return {
     checkId: 'DEV-2',
-    status: !podsWithoutReadinessProbes.length? ResultStatus.Pass: ResultStatus.Fail,
+    status: !podsWithoutReadinessProbes.length ? ResultStatus.Pass : ResultStatus.Fail,
     severity: Severity.Medium,
     details: details
   }
@@ -113,19 +117,21 @@ export function checkForStartupProbes(pods) {
     }
 
     details.push({
-      status:  ResultStatus.Fail,
-      message: message}
-      );
+      status: ResultStatus.Fail,
+      message: message
+    }
+    );
   } else {
     details.push({
-      status:  ResultStatus.Pass,
-      message: 'All pods have startup probes'}
-      );
+      status: ResultStatus.Pass,
+      message: 'All pods have startup probes'
+    }
+    );
   }
 
   return {
     checkId: 'DEV-2B',
-    status: !podsWithoutStartupProbes.length? ResultStatus.Pass: ResultStatus.Fail,
+    status: !podsWithoutStartupProbes.length ? ResultStatus.Pass : ResultStatus.Fail,
     severity: Severity.Medium,
     details: details
   }
@@ -154,19 +160,21 @@ export function checkForPreStopHooks(pods) {
     }
 
     details.push({
-      status:  ResultStatus.Fail,
-      message: message}
-      );
+      status: ResultStatus.Fail,
+      message: message
+    }
+    );
   } else {
     details.push({
-      status:  ResultStatus.Pass,
-      message: 'All pods have preStop hooks'}
-      );
+      status: ResultStatus.Pass,
+      message: 'All pods have preStop hooks'
+    }
+    );
   }
 
   return {
     checkId: 'DEV-3',
-    status: !podsWithoutPreStopHooks.length? ResultStatus.Pass: ResultStatus.Fail,
+    status: !podsWithoutPreStopHooks.length ? ResultStatus.Pass : ResultStatus.Fail,
     severity: Severity.Medium,
     details: details
   }
@@ -198,7 +206,7 @@ export function checkForSingleReplicas(deployments) {
 
   return {
     checkId: 'DEV-4',
-    status: !deploymentsWithOneReplica.length? ResultStatus.Pass: ResultStatus.Fail,
+    status: !deploymentsWithOneReplica.length ? ResultStatus.Pass : ResultStatus.Fail,
     severity: Severity.High,
     details: details
   }
@@ -236,7 +244,7 @@ export function checkForTags(resources) {
 
   return {
     checkId: 'DEV-5',
-    status: !resourcesWithoutTags.length? ResultStatus.Pass: ResultStatus.Fail,
+    status: !resourcesWithoutTags.length ? ResultStatus.Pass : ResultStatus.Fail,
     severity: Severity.High,
     details: details
   }
@@ -267,7 +275,7 @@ export function checkForHorizontalPodAutoscalers(namespaces, autoScalers) {
 
   return {
     checkId: 'DEV-6',
-    status: !namespacesWithoutAutoscalers.length? ResultStatus.Pass: ResultStatus.Fail,
+    status: !namespacesWithoutAutoscalers.length ? ResultStatus.Pass : ResultStatus.Fail,
     severity: Severity.Low,
     details: details
   }
@@ -301,7 +309,7 @@ export function checkForAzureSecretsStoreProvider(pods) {
 
   return {
     checkId: 'DEV-7',
-    status: secretsStoreProviderExists.length? ResultStatus.Pass: ResultStatus.Fail,
+    status: secretsStoreProviderExists.length ? ResultStatus.Pass : ResultStatus.Fail,
     severity: Severity.Medium,
     details: details
   }
@@ -329,7 +337,7 @@ export function checkForAzureManagedPodIdentity(clusterDetails) {
 
   return {
     checkId: 'DEV-8',
-    status: managedPodIdentityEnabled? ResultStatus.Pass: ResultStatus.Fail,
+    status: managedPodIdentityEnabled ? ResultStatus.Pass : ResultStatus.Fail,
     severity: Severity.Medium,
     details: details
   }
@@ -358,7 +366,7 @@ export function checkForPodsInDefaultNamespace(pods) {
 
   return {
     checkId: 'DEV-9',
-    status: !podsInDefaultNamespace.length? ResultStatus.Pass: ResultStatus.Fail,
+    status: !podsInDefaultNamespace.length ? ResultStatus.Pass : ResultStatus.Fail,
     severity: Severity.High,
     details: details
   }
@@ -390,7 +398,7 @@ export function checkForPodsWithoutRequestsOrLimits(pods) {
 
   return {
     checkId: 'DEV-10',
-    status: !podsWithNoRequestsOrLimits.length? ResultStatus.Pass: ResultStatus.Fail,
+    status: !podsWithNoRequestsOrLimits.length ? ResultStatus.Pass : ResultStatus.Fail,
     severity: Severity.High,
     details: details
   }
@@ -424,7 +432,7 @@ export function checkForPodsWithDefaultSecurityContext(pods) {
 
   return {
     checkId: 'DEV-11',
-    status: !podsWithDefaultSecurityContext.length? ResultStatus.Pass: ResultStatus.Fail,
+    status: !podsWithDefaultSecurityContext.length ? ResultStatus.Pass : ResultStatus.Fail,
     severity: Severity.High,
     details: details
   }
