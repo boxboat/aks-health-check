@@ -196,12 +196,23 @@ export function checkForSingleReplicas(deployments) {
 
   // Log output
   if (deploymentsWithOneReplica.length) {
-    console.log(chalk.red(`--- Found ${deploymentsWithOneReplica.length} deployments with a single replica`));
+    let message = `Found ${deploymentsWithOneReplica.length} deployments with a single replica`;
+
     if (global.verbose) {
-      deploymentsWithOneReplica.forEach(x => console.log(chalk.red(`------ ${x.metadata.namespace} - ${x.metadata.name}`)));
+      deploymentsWithOneReplica.forEach(x => message += `${EOL}${space}${x.metadata.namespace}/${x.metadata.name}`);
     }
+
+    details.push({
+      status: ResultStatus.Fail,
+      message: message
+    }
+    );
   } else {
-    console.log(chalk.green('--- All deployments have more than one replica'));
+    details.push({
+      status: ResultStatus.Pass,
+      message: 'All deployments have more than one replica'
+    }
+    );
   }
 
   return {
