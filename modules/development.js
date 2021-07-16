@@ -413,9 +413,24 @@ export function checkForPodsInDefaultNamespace(pods) {
 
   // Log output
   if (podsInDefaultNamespace.length) {
-    console.log(chalk.red(`--- Found ${podsInDefaultNamespace.length} pods running in the default namespace`));
+    let message = `Found ${podsInDefaultNamespace.length} pods running in the default namespace`;
+
+    if (global.verbose) {
+      podsInDefaultNamespace.forEach(x => message += `${EOL}${space}${x.metadata.name}`);
+    }
+
+    details.push({
+      status: ResultStatus.Fail,
+      message: message
+    }
+    );
   } else {
-    console.log(chalk.green('--- No pods running in default namespace'));
+
+    details.push({
+      status: ResultStatus.Pass,
+      message: 'No pods running in default namespace'
+    }
+    );
   }
 
   return {
@@ -446,8 +461,24 @@ export function checkForPodsWithoutRequestsOrLimits(pods) {
     if (global.verbose) {
       podsWithNoRequestsOrLimits.forEach(x => console.log(chalk.red(`------ ${x.metadata.namespace} - ${x.metadata.name}`)));
     }
+
+    let message = `Found ${podsWithNoRequestsOrLimits.length} pods without either resource requests or limits`;
+
+    if (global.verbose) {
+      podsWithNoRequestsOrLimits.forEach(x => message += `${EOL}${space}${x.metadata.namespace}/${x.metadata.name}`);
+    }
+
+    details.push({
+      status: ResultStatus.Fail,
+      message: message
+    }
+    );
   } else {
-    console.log(chalk.green('--- All pods have resource requests and limits'));
+    details.push({
+      status: ResultStatus.Pass,
+      message: 'All pods have resource requests and limits'
+    }
+    );
   }
 
   return {
