@@ -290,9 +290,23 @@ export function checkForHorizontalPodAutoscalers(namespaces, autoScalers) {
 
   // Log output
   if (namespacesWithoutAutoscalers.length) {
-    console.log(chalk.red(`--- Found ${namespacesWithoutAutoscalers.length} namespaces without any Horizontal Pod Autoscalers`));
+    let message = `Found ${namespacesWithoutAutoscalers.length} namespaces without any Horizontal Pod Autoscalers`;
+
+    if (global.verbose) {
+      namespacesWithoutAutoscalers.forEach(x => message += `${EOL}${space}${x}`);
+    }
+
+    details.push({
+      status: ResultStatus.Fail,
+      message: message
+    }
+    );
   } else {
-    console.log(chalk.green('--- All namespaces contain Horizontal Pod Autoscalers'));
+    details.push({
+      status: ResultStatus.Pass,
+      message: 'All namespaces contain Horizontal Pod Autoscalers'
+    }
+    );
   }
 
   return {
