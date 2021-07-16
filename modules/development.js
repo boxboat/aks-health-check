@@ -502,12 +502,23 @@ export function checkForPodsWithDefaultSecurityContext(pods) {
 
   // Log output
   if (podsWithDefaultSecurityContext.length) {
-    console.log(chalk.red(`--- Found ${podsWithDefaultSecurityContext.length} pods using the default security context`));
+    let message = `Found ${podsWithDefaultSecurityContext.length} pods using the default security context`;
+
     if (global.verbose) {
-      podsWithDefaultSecurityContext.forEach(x => console.log(chalk.red(`------ ${x.metadata.namespace} - ${x.metadata.name}`)));
+      podsWithDefaultSecurityContext.forEach(x => message += `${EOL}${space}${x.metadata.namespace}/${x.metadata.name}`);
     }
+
+    details.push({
+      status: ResultStatus.Fail,
+      message: message
+    }
+    );
   } else {
-    console.log(chalk.green('--- All pods have their security context specified'));
+    details.push({
+      status: ResultStatus.Pass,
+      message: 'All pods have their security context specified'
+    }
+    );
   }
 
   return {
