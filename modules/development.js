@@ -245,12 +245,23 @@ export function checkForTags(resources) {
 
   // Log output
   if (resourcesWithoutTags.length) {
-    console.log(chalk.red(`--- Found ${resourcesWithoutTags.length} resources without labels or annotations`));
+    let message = `Found ${resourcesWithoutTags.length} resources without labels or annotations`;
+
     if (global.verbose) {
-      resourcesWithoutTags.forEach(x => console.log(chalk.red(`------ ${x.metadata.namespace} - ${x.metadata.name} - ${x.kind}`)));
+      resourcesWithoutTags.forEach(x => message += `${EOL}${space}${x.metadata.namespace}/${x.metadata.name}/${x.kind}`);
     }
+
+    details.push({
+      status: ResultStatus.Fail,
+      message: message
+    }
+    );
   } else {
-    console.log(chalk.green('--- All resources have labels or annotations'));
+    details.push({
+      status: ResultStatus.Pass,
+      message: 'All resources have labels or annotations'
+    }
+    );
   }
 
   return {
