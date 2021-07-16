@@ -147,12 +147,21 @@ export function checkForPreStopHooks(pods) {
 
   // Log output
   if (podsWithoutPreStopHooks.length) {
-    console.log(chalk.red(`--- Found ${podsWithoutPreStopHooks.length} pods without preStop hooks`));
+    let message = `Found ${podsWithoutPreStopHooks.length} pods without preStop hooks`;
+
     if (global.verbose) {
-      podsWithoutPreStopHooks.forEach(x => console.log(chalk.red(`------ ${x.metadata.namespace} - ${x.metadata.name}`)));
+      podsWithoutPreStopHooks.forEach(x => message += `${EOL}${space}${x.metadata.namespace}/${x.metadata.name}`);
     }
+
+    details.push({
+      status:  ResultStatus.Fail,
+      message: message}
+      );
   } else {
-    console.log(chalk.green('--- All pods have preStop hooks'));
+    details.push({
+      status:  ResultStatus.Pass,
+      message: 'All pods have preStop hooks'}
+      );
   }
 
   return {
