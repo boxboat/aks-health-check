@@ -338,9 +338,18 @@ export function checkForAzureSecretsStoreProvider(pods) {
 
   // Log output
   if (!secretsStoreProviderExists) {
-    console.log(chalk.red('--- Azure Secrets Store Provider was not found in the cluster'));
+    let message = `Azure Secrets Store Provider was not found in the cluster`;
+    details.push({
+      status: ResultStatus.Fail,
+      message: message
+    }
+    );
   } else {
-    console.log(chalk.green('--- Azure Secrets Store Provider is installed'));
+    details.push({
+      status: ResultStatus.Pass,
+      message: 'Azure Secrets Store Provider is installed'
+    }
+    );
   }
 
   return {
@@ -366,9 +375,18 @@ export function checkForAzureManagedPodIdentity(clusterDetails) {
 
   // Log output
   if (!managedPodIdentityEnabled) {
-    console.log(chalk.red('--- Azure Managed Identity for pods is not enabled'));
+    let message = `Azure Managed Identity for pods is not enabled`;
+    details.push({
+      status: ResultStatus.Fail,
+      message: message
+    }
+    );
   } else {
-    console.log(chalk.green('--- Azure Managed Identity for pods is enabled'));
+    details.push({
+      status: ResultStatus.Pass,
+      message: 'Azure Managed Identity for pods is enabled'
+    }
+    );
   }
 
   return {
