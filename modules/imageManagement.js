@@ -86,7 +86,7 @@ export function checkForRuntimeContainerSecurity(pods) {
 
     details.push({
       status: ResultStatus.Pass,
-      message: "Velero is installed"
+      message: message
     }
     );
   }
