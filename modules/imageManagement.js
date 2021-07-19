@@ -242,6 +242,8 @@ export function checkForNoPrivilegedContainers(constraintTemplates) {
 
   console.log(chalk.white("Checking for 'No privileged containers' policy..."));
 
+  let details = []
+
   // Check if no privileged containers constraint is defined
   var constraintDefined = constraintTemplates
     .items
@@ -249,14 +251,24 @@ export function checkForNoPrivilegedContainers(constraintTemplates) {
 
   // Log output
   if (!constraintDefined) {
-    console.log(chalk.red(`--- 'No privileged containers' policy not applied`));
+    details.push({
+      status: ResultStatus.Fail,
+      message: "'No privileged containers' policy not applied"
+    }
+    );
   } else {
     console.log(chalk.green("--- 'No privileged containers' policy applied"));
+    details.push({
+      status: ResultStatus.Pass,
+      message: "No privileged containers' policy applied"
+    }
+    );
   }
 
   return {
     checkId: 'IMG-8',
     status: constraintDefined.length? ResultStatus.Pass: ResultStatus.Fail,
-    severity: Severity.High
+    severity: Severity.High,
+    details: details
   }
 }
