@@ -157,6 +157,10 @@ export async function checkForAksAcrRbacIntegration(clusterDetails, containerReg
   if (problemRegistries.length) {
     let message = `${problemRegistries.length} registries did not have AKS/ACR RBAC integration`;
 
+    if (global.verbose) {
+      problemRegistries.forEach(x => message += `${EOL}${space}${x}`);
+    }
+
     details.push({
       status: ResultStatus.Fail,
       message: message
