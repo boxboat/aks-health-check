@@ -3,7 +3,9 @@ import { equalsIgnoreCase } from '../helpers/stringCompare.js';
 import { executeCommand } from '../helpers/commandHelpers.js';
 import { ResultStatus } from '../helpers/commandStatus.js';
 import { Severity } from '../helpers/commandSeverity.js';
+import { EOL } from 'os';
 
+const space = '            '
 
 //
 // Checks for the 'only use allowed images' policy
@@ -12,6 +14,8 @@ export function checkForAllowedImages(constraintTemplates) {
 
   console.log(chalk.white("Checking for 'Only use allowed images' policy..."));
 
+  let details = []
+
   // Check if allowed images constraint is defined
   var constraintDefined = constraintTemplates
     .items
@@ -19,15 +23,24 @@ export function checkForAllowedImages(constraintTemplates) {
 
   // Log output
   if (!constraintDefined) {
-    console.log(chalk.red(`--- 'Only use allowed images' policy not applied`));
+    details.push({
+      status: ResultStatus.Fail,
+      message: "Only 'use allowed images' policy not applied"
+    }
+    );
   } else {
-    console.log(chalk.green("--- 'Only use allowed images' policy applied"));
+    details.push({
+      status: ResultStatus.Pass,
+      message: "'Only use allowed images' policy applied"
+    }
+    );
   }
 
   return {
     checkId: 'IMG-3',
     status: constraintDefined.length? ResultStatus.Pass: ResultStatus.Fail,
-    severity: Severity.High
+    severity: Severity.High,
+    details: details
   }
 }
 
@@ -102,7 +115,7 @@ export async function checkForAksAcrRbacIntegration(clusterDetails, containerReg
    if (!kubeletIdentityObjectId) {
      console.log(chalk.red('--- Could not determine cluster identity. Stopping check.'));
      return {
-      checkId: 'IMG-3',
+      checkId: 'IMG-5',
       status: ResultStatus.Fail,
       severity: Severity.High
     }
