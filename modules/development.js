@@ -1,6 +1,9 @@
 import chalk from "chalk"
 import { ResultStatus } from '../helpers/commandStatus.js';
 import { Severity } from '../helpers/commandSeverity.js';
+import { EOL } from 'os';
+
+const space = '            '
 
 //
 // Checks for any pods without liveness probes
@@ -9,6 +12,8 @@ export function checkForLivenessProbes(pods) {
 
   console.log(chalk.white("Checking for liveness probes..."));
 
+  let details = []
+
   // Find all the pods without liveness probes
   var podsWithoutLivenessProbes = pods
     .items
@@ -16,18 +21,32 @@ export function checkForLivenessProbes(pods) {
 
   // Log output
   if (podsWithoutLivenessProbes.length) {
-    console.log(chalk.red(`--- Found ${podsWithoutLivenessProbes.length} pods without liveness probes`));
+
+    let message = `Found ${podsWithoutLivenessProbes.length} pods without liveness probes`;
+
     if (global.verbose) {
-      podsWithoutLivenessProbes.forEach(x => console.log(chalk.red(`------ ${x.metadata.namespace} - ${x.metadata.name}`)));
+      podsWithoutLivenessProbes.forEach(x => message += `${EOL}${space}${x.metadata.namespace}/${x.metadata.name}`);
     }
+
+    details.push({
+      status: ResultStatus.Fail,
+      message: message
+    }
+    );
+
   } else {
-    console.log(chalk.green('--- All pods have liveness probes'));
+    details.push({
+      status: ResultStatus.Pass,
+      message: 'All pods have liveness probes'
+    }
+    );
   }
 
   return {
     checkId: 'DEV-1',
-    status: !podsWithoutLivenessProbes.length? ResultStatus.Pass: ResultStatus.Fail,
-    severity: Severity.Medium
+    status: !podsWithoutLivenessProbes.length ? ResultStatus.Pass : ResultStatus.Fail,
+    severity: Severity.Medium,
+    details: details
   }
 }
 
@@ -38,6 +57,8 @@ export function checkForReadinessProbes(pods) {
 
   console.log(chalk.white("Checking for readiness probes..."));
 
+  let details = []
+
   // Find all the pods without readiness probes
   var podsWithoutReadinessProbes = pods
     .items
@@ -45,18 +66,31 @@ export function checkForReadinessProbes(pods) {
 
   // Log output
   if (podsWithoutReadinessProbes.length) {
-    console.log(chalk.red(`--- Found ${podsWithoutReadinessProbes.length} pods without readiness probes`));
+
+    let message = `Found ${podsWithoutReadinessProbes.length} pods without readiness probes`;
+
     if (global.verbose) {
-      podsWithoutReadinessProbes.forEach(x => console.log(chalk.red(`------ ${x.metadata.namespace} - ${x.metadata.name}`)));
+      podsWithoutReadinessProbes.forEach(x => message += `${EOL}${space}${x.metadata.namespace}/${x.metadata.name}`);
     }
+
+    details.push({
+      status: ResultStatus.Fail,
+      message: message
+    }
+    );
   } else {
-    console.log(chalk.green('--- All pods have readiness probes'));
+    details.push({
+      status: ResultStatus.Pass,
+      message: 'All pods have readiness probes'
+    }
+    );
   }
 
   return {
     checkId: 'DEV-2',
-    status: !podsWithoutReadinessProbes.length? ResultStatus.Pass: ResultStatus.Fail,
-    severity: Severity.Medium
+    status: !podsWithoutReadinessProbes.length ? ResultStatus.Pass : ResultStatus.Fail,
+    severity: Severity.Medium,
+    details: details
   }
 }
 
@@ -67,6 +101,8 @@ export function checkForStartupProbes(pods) {
 
   console.log(chalk.white("Checking for startup probes..."));
 
+  let details = []
+
   // Find all the pods without startup probes
   var podsWithoutStartupProbes = pods
     .items
@@ -74,18 +110,30 @@ export function checkForStartupProbes(pods) {
 
   // Log output
   if (podsWithoutStartupProbes.length) {
-    console.log(chalk.red(`--- Found ${podsWithoutStartupProbes.length} pods without startup probes`));
+    let message = `Found ${podsWithoutStartupProbes.length} pods without startup probes`;
+
     if (global.verbose) {
-      podsWithoutStartupProbes.forEach(x => console.log(chalk.red(`------ ${x.metadata.namespace} - ${x.metadata.name}`)));
+      podsWithoutStartupProbes.forEach(x => message += `${EOL}${space}${x.metadata.namespace}/${x.metadata.name}`);
     }
+
+    details.push({
+      status: ResultStatus.Fail,
+      message: message
+    }
+    );
   } else {
-    console.log(chalk.green('--- All pods have startup probes'));
+    details.push({
+      status: ResultStatus.Pass,
+      message: 'All pods have startup probes'
+    }
+    );
   }
 
   return {
-    checkId: 'DEV-2',
-    status: !podsWithoutStartupProbes.length? ResultStatus.Pass: ResultStatus.Fail,
-    severity: Severity.Medium
+    checkId: 'DEV-2B',
+    status: !podsWithoutStartupProbes.length ? ResultStatus.Pass : ResultStatus.Fail,
+    severity: Severity.Medium,
+    details: details
   }
 }
 
@@ -96,6 +144,8 @@ export function checkForPreStopHooks(pods) {
 
   console.log(chalk.white("Checking for preStop hooks..."));
 
+  let details = []
+
   // Find all the pods without preStop hooks
   var podsWithoutPreStopHooks = pods
     .items
@@ -103,18 +153,30 @@ export function checkForPreStopHooks(pods) {
 
   // Log output
   if (podsWithoutPreStopHooks.length) {
-    console.log(chalk.red(`--- Found ${podsWithoutPreStopHooks.length} pods without preStop hooks`));
+    let message = `Found ${podsWithoutPreStopHooks.length} pods without preStop hooks`;
+
     if (global.verbose) {
-      podsWithoutPreStopHooks.forEach(x => console.log(chalk.red(`------ ${x.metadata.namespace} - ${x.metadata.name}`)));
+      podsWithoutPreStopHooks.forEach(x => message += `${EOL}${space}${x.metadata.namespace}/${x.metadata.name}`);
     }
+
+    details.push({
+      status: ResultStatus.Fail,
+      message: message
+    }
+    );
   } else {
-    console.log(chalk.green('--- All pods have preStop hooks'));
+    details.push({
+      status: ResultStatus.Pass,
+      message: 'All pods have preStop hooks'
+    }
+    );
   }
 
   return {
     checkId: 'DEV-3',
-    status: !podsWithoutPreStopHooks.length? ResultStatus.Pass: ResultStatus.Fail,
-    severity: Severity.Medium
+    status: !podsWithoutPreStopHooks.length ? ResultStatus.Pass : ResultStatus.Fail,
+    severity: Severity.Medium,
+    details: details
   }
 }
 
@@ -125,6 +187,8 @@ export function checkForSingleReplicas(deployments) {
 
   console.log(chalk.white("Checking for single replica deployments..."));
 
+  let details = []
+
   // Find all the deployments with a single replica
   var deploymentsWithOneReplica = deployments
     .items
@@ -132,18 +196,30 @@ export function checkForSingleReplicas(deployments) {
 
   // Log output
   if (deploymentsWithOneReplica.length) {
-    console.log(chalk.red(`--- Found ${deploymentsWithOneReplica.length} deployments with a single replica`));
+    let message = `Found ${deploymentsWithOneReplica.length} deployments with a single replica`;
+
     if (global.verbose) {
-      deploymentsWithOneReplica.forEach(x => console.log(chalk.red(`------ ${x.metadata.namespace} - ${x.metadata.name}`)));
+      deploymentsWithOneReplica.forEach(x => message += `${EOL}${space}${x.metadata.namespace}/${x.metadata.name}`);
     }
+
+    details.push({
+      status: ResultStatus.Fail,
+      message: message
+    }
+    );
   } else {
-    console.log(chalk.green('--- All deployments have more than one replica'));
+    details.push({
+      status: ResultStatus.Pass,
+      message: 'All deployments have more than one replica'
+    }
+    );
   }
 
   return {
     checkId: 'DEV-4',
-    status: !deploymentsWithOneReplica.length? ResultStatus.Pass: ResultStatus.Fail,
-    severity: Severity.High
+    status: !deploymentsWithOneReplica.length ? ResultStatus.Pass : ResultStatus.Fail,
+    severity: Severity.High,
+    details: details
   }
 }
 
@@ -153,6 +229,8 @@ export function checkForSingleReplicas(deployments) {
 export function checkForTags(resources) {
 
   console.log(chalk.white("Checking for resources without labels or annotations..."));
+
+  let details = []
 
   // Filter out the default namespace resource - this is usually never tagged
   var allResources = resources
@@ -167,18 +245,30 @@ export function checkForTags(resources) {
 
   // Log output
   if (resourcesWithoutTags.length) {
-    console.log(chalk.red(`--- Found ${resourcesWithoutTags.length} resources without labels or annotations`));
+    let message = `Found ${resourcesWithoutTags.length} resources without labels or annotations`;
+
     if (global.verbose) {
-      resourcesWithoutTags.forEach(x => console.log(chalk.red(`------ ${x.metadata.namespace} - ${x.metadata.name} - ${x.kind}`)));
+      resourcesWithoutTags.forEach(x => message += `${EOL}${space}${x.metadata.namespace}/${x.metadata.name}/${x.kind}`);
     }
+
+    details.push({
+      status: ResultStatus.Fail,
+      message: message
+    }
+    );
   } else {
-    console.log(chalk.green('--- All resources have labels or annotations'));
+    details.push({
+      status: ResultStatus.Pass,
+      message: 'All resources have labels or annotations'
+    }
+    );
   }
 
   return {
     checkId: 'DEV-5',
-    status: !resourcesWithoutTags.length? ResultStatus.Pass: ResultStatus.Fail,
-    severity: Severity.High
+    status: !resourcesWithoutTags.length ? ResultStatus.Pass : ResultStatus.Fail,
+    severity: Severity.High,
+    details: details
   }
 }
 
@@ -189,6 +279,8 @@ export function checkForHorizontalPodAutoscalers(namespaces, autoScalers) {
 
   console.log(chalk.white("Checking for namespaces without Horizontal Pod Autoscalers..."));
 
+  let details = []
+
   // Get all namespaces without any autoscalers
   var namespacesWithoutAutoscalers = namespaces
     .items
@@ -198,15 +290,30 @@ export function checkForHorizontalPodAutoscalers(namespaces, autoScalers) {
 
   // Log output
   if (namespacesWithoutAutoscalers.length) {
-    console.log(chalk.red(`--- Found ${namespacesWithoutAutoscalers.length} namespaces without any Horizontal Pod Autoscalers`));
+    let message = `Found ${namespacesWithoutAutoscalers.length} namespaces without any Horizontal Pod Autoscalers`;
+
+    if (global.verbose) {
+      namespacesWithoutAutoscalers.forEach(x => message += `${EOL}${space}${x}`);
+    }
+
+    details.push({
+      status: ResultStatus.Fail,
+      message: message
+    }
+    );
   } else {
-    console.log(chalk.green('--- All namespaces contain Horizontal Pod Autoscalers'));
+    details.push({
+      status: ResultStatus.Pass,
+      message: 'All namespaces contain Horizontal Pod Autoscalers'
+    }
+    );
   }
 
   return {
     checkId: 'DEV-6',
-    status: !namespacesWithoutAutoscalers.length? ResultStatus.Pass: ResultStatus.Fail,
-    severity: Severity.Low
+    status: !namespacesWithoutAutoscalers.length ? ResultStatus.Pass : ResultStatus.Fail,
+    severity: Severity.Low,
+    details: details
   }
 }
 
@@ -216,6 +323,8 @@ export function checkForHorizontalPodAutoscalers(namespaces, autoScalers) {
 export function checkForAzureSecretsStoreProvider(pods) {
 
   console.log(chalk.white("Checking for Azure secrets store provider..."));
+
+  let details = []
 
   // Grab all the containers for all the pods
   var containerImages = pods
@@ -229,15 +338,25 @@ export function checkForAzureSecretsStoreProvider(pods) {
 
   // Log output
   if (!secretsStoreProviderExists) {
-    console.log(chalk.red('--- Azure Secrets Store Provider was not found in the cluster'));
+    let message = `Azure Secrets Store Provider was not found in the cluster`;
+    details.push({
+      status: ResultStatus.Fail,
+      message: message
+    }
+    );
   } else {
-    console.log(chalk.green('--- Azure Secrets Store Provider is installed'));
+    details.push({
+      status: ResultStatus.Pass,
+      message: 'Azure Secrets Store Provider is installed'
+    }
+    );
   }
 
   return {
     checkId: 'DEV-7',
-    status: secretsStoreProviderExists.length? ResultStatus.Pass: ResultStatus.Fail,
-    severity: Severity.Medium
+    status: secretsStoreProviderExists.length ? ResultStatus.Pass : ResultStatus.Fail,
+    severity: Severity.Medium,
+    details: details
   }
 }
 
@@ -248,21 +367,33 @@ export function checkForAzureManagedPodIdentity(clusterDetails) {
 
   console.log(chalk.white("Checking for Azure Managed Identity for pods..."));
 
+  let details = []
+
   // Determine if managed identity for pods is enabled
   var podIdentityProfile = clusterDetails.podIdentityProfile;
   var managedPodIdentityEnabled = podIdentityProfile && podIdentityProfile.enabled;
 
   // Log output
   if (!managedPodIdentityEnabled) {
-    console.log(chalk.red('--- Azure Managed Identity for pods is not enabled'));
+    let message = `Azure Managed Identity for pods is not enabled`;
+    details.push({
+      status: ResultStatus.Fail,
+      message: message
+    }
+    );
   } else {
-    console.log(chalk.green('--- Azure Managed Identity for pods is enabled'));
+    details.push({
+      status: ResultStatus.Pass,
+      message: 'Azure Managed Identity for pods is enabled'
+    }
+    );
   }
 
   return {
     checkId: 'DEV-8',
-    status: managedPodIdentityEnabled? ResultStatus.Pass: ResultStatus.Fail,
-    severity: Severity.Medium
+    status: managedPodIdentityEnabled ? ResultStatus.Pass : ResultStatus.Fail,
+    severity: Severity.Medium,
+    details: details
   }
 }
 
@@ -273,6 +404,8 @@ export function checkForPodsInDefaultNamespace(pods) {
 
   console.log(chalk.white("Checking for pods in default namespace..."));
 
+  let details = []
+
   // Grab the pods running in the default namespace
   var podsInDefaultNamespace = pods
     .items
@@ -280,15 +413,31 @@ export function checkForPodsInDefaultNamespace(pods) {
 
   // Log output
   if (podsInDefaultNamespace.length) {
-    console.log(chalk.red(`--- Found ${podsInDefaultNamespace.length} pods running in the default namespace`));
+    let message = `Found ${podsInDefaultNamespace.length} pods running in the default namespace`;
+
+    if (global.verbose) {
+      podsInDefaultNamespace.forEach(x => message += `${EOL}${space}${x.metadata.name}`);
+    }
+
+    details.push({
+      status: ResultStatus.Fail,
+      message: message
+    }
+    );
   } else {
-    console.log(chalk.green('--- No pods running in default namespace'));
+
+    details.push({
+      status: ResultStatus.Pass,
+      message: 'No pods running in default namespace'
+    }
+    );
   }
 
   return {
     checkId: 'DEV-9',
-    status: !podsInDefaultNamespace.length? ResultStatus.Pass: ResultStatus.Fail,
-    severity: Severity.High
+    status: !podsInDefaultNamespace.length ? ResultStatus.Pass : ResultStatus.Fail,
+    severity: Severity.High,
+    details: details
   }
 }
 
@@ -299,6 +448,8 @@ export function checkForPodsWithoutRequestsOrLimits(pods) {
 
   console.log(chalk.white("Checking for pods without resource requests/limits..."));
 
+  let details = []
+
   // Grab the pods with no requests or limits defined
   var podsWithNoRequestsOrLimits = pods
     .items
@@ -306,18 +457,30 @@ export function checkForPodsWithoutRequestsOrLimits(pods) {
 
   // Log output
   if (podsWithNoRequestsOrLimits.length) {
-    console.log(chalk.red(`--- Found ${podsWithNoRequestsOrLimits.length} pods without either resource requests or limits`));
+    let message = `Found ${podsWithNoRequestsOrLimits.length} pods without either resource requests or limits`;
+
     if (global.verbose) {
-      podsWithNoRequestsOrLimits.forEach(x => console.log(chalk.red(`------ ${x.metadata.namespace} - ${x.metadata.name}`)));
+      podsWithNoRequestsOrLimits.forEach(x => message += `${EOL}${space}${x.metadata.namespace}/${x.metadata.name}`);
     }
+
+    details.push({
+      status: ResultStatus.Fail,
+      message: message
+    }
+    );
   } else {
-    console.log(chalk.green('--- All pods have resource requests and limits'));
+    details.push({
+      status: ResultStatus.Pass,
+      message: 'All pods have resource requests and limits'
+    }
+    );
   }
 
   return {
     checkId: 'DEV-10',
-    status: !podsWithNoRequestsOrLimits.length? ResultStatus.Pass: ResultStatus.Fail,
-    severity: Severity.High
+    status: !podsWithNoRequestsOrLimits.length ? ResultStatus.Pass : ResultStatus.Fail,
+    severity: Severity.High,
+    details: details
   }
 }
 
@@ -328,6 +491,8 @@ export function checkForPodsWithDefaultSecurityContext(pods) {
 
   console.log(chalk.white("Checking for pods with default security context..."));
 
+  let details = []
+
   // Grab the pods with no requests or limits defined
   var podsWithDefaultSecurityContext = pods
     .items
@@ -337,17 +502,29 @@ export function checkForPodsWithDefaultSecurityContext(pods) {
 
   // Log output
   if (podsWithDefaultSecurityContext.length) {
-    console.log(chalk.red(`--- Found ${podsWithDefaultSecurityContext.length} pods using the default security context`));
+    let message = `Found ${podsWithDefaultSecurityContext.length} pods using the default security context`;
+
     if (global.verbose) {
-      podsWithDefaultSecurityContext.forEach(x => console.log(chalk.red(`------ ${x.metadata.namespace} - ${x.metadata.name}`)));
+      podsWithDefaultSecurityContext.forEach(x => message += `${EOL}${space}${x.metadata.namespace}/${x.metadata.name}`);
     }
+
+    details.push({
+      status: ResultStatus.Fail,
+      message: message
+    }
+    );
   } else {
-    console.log(chalk.green('--- All pods have their security context specified'));
+    details.push({
+      status: ResultStatus.Pass,
+      message: 'All pods have their security context specified'
+    }
+    );
   }
 
   return {
     checkId: 'DEV-11',
-    status: !podsWithDefaultSecurityContext.length? ResultStatus.Pass: ResultStatus.Fail,
-    severity: Severity.High
+    status: !podsWithDefaultSecurityContext.length ? ResultStatus.Pass : ResultStatus.Fail,
+    severity: Severity.High,
+    details: details
   }
 }

@@ -8,6 +8,10 @@
         "description": "Implement a proper readiness/startup probe"
     },
     {
+        "checkId": "DEV-2B",
+        "description": "Implement a proper startup probes"
+    },
+    {
         "checkId": "DEV-3",
         "description": "Implement a proper prestop hook"
     },
