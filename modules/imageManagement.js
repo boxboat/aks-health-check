@@ -106,6 +106,8 @@ export async function checkForAksAcrRbacIntegration(clusterDetails, containerReg
 
   console.log(chalk.white("Checking for ACR/AKS RBAC integration for pulling images..."));
 
+  let details = []
+
   // Grab the kubelet identity from identity profile
   var identityProfile = clusterDetails.identityProfile;
   var kubeletIdentityObjectId = identityProfile && identityProfile.kubeletidentity.objectId;
@@ -127,7 +129,11 @@ export async function checkForAksAcrRbacIntegration(clusterDetails, containerReg
 
   // Sanity check cluster identity
    if (!kubeletIdentityObjectId) {
-     console.log(chalk.red('--- Could not determine cluster identity. Stopping check.'));
+     details.push({
+      status: ResultStatus.Pass,
+      message: "Could not determine cluster identity. Stopping check."
+    }
+    );
      return {
       checkId: 'IMG-5',
       status: ResultStatus.Fail,
@@ -149,15 +155,26 @@ export async function checkForAksAcrRbacIntegration(clusterDetails, containerReg
 
   // Log output
   if (problemRegistries.length) {
-    console.log(chalk.red(`--- ${problemRegistries.length} registries did not have AKS/ACR RBAC integration`));
+    let message = `${problemRegistries.length} registries did not have AKS/ACR RBAC integration`;
+
+    details.push({
+      status: ResultStatus.Fail,
+      message: message
+    }
+    );
   } else {
-    console.log(chalk.green("--- All registries have AKS/ACR RBAC integration"));
+    details.push({
+      status: ResultStatus.Pass,
+      message: "All registries have AKS/ACR RBAC integration"
+    }
+    );
   }
 
   return {
     checkId: 'IMG-5',
     status: !problemRegistries.length? ResultStatus.Pass: ResultStatus.Fail,
-    severity: Severity.High
+    severity: Severity.High,
+    details: details
   }
 }
 
