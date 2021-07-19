@@ -30,6 +30,20 @@ $ aks-hc check all -g <resource group> -n <cluster name> -i ingress-nginx,kube-n
 $ exit
 ```
 
+### Optional - Azure Container Registry
+
+If you use Azure Container Registry (ACR), you can have this health check review some basic configuration. If will not inspect container images pushed to the registry. 
+
+To do this, look at the container registries available then specify the `--image-registries` option.
+
+``` bash
+$ az acr list --query "[].name"
+foo1
+foo2
+
+$ aks-hc check all -g <resource group> -n <cluster name> -i ingress-nginx,kube-node-lease,kube-public,kube-system --image-registries "foo1,foo2"
+```
+
 ## Option B - Run with Azure Service Principal
 
 This option walks you through running the health check using an Azure Managed Identity so that it can be tied to a "service principal". Essentially, it avoids impersoning a user or running with someone's identity.

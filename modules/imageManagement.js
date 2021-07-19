@@ -3,7 +3,9 @@ import { equalsIgnoreCase } from '../helpers/stringCompare.js';
 import { executeCommand } from '../helpers/commandHelpers.js';
 import { ResultStatus } from '../helpers/commandStatus.js';
 import { Severity } from '../helpers/commandSeverity.js';
+import { EOL } from 'os';
 
+const space = '            '
 
 //
 // Checks for the 'only use allowed images' policy
@@ -12,6 +14,8 @@ export function checkForAllowedImages(constraintTemplates) {
 
   console.log(chalk.white("Checking for 'Only use allowed images' policy..."));
 
+  let details = []
+
   // Check if allowed images constraint is defined
   var constraintDefined = constraintTemplates
     .items
@@ -19,15 +23,24 @@ export function checkForAllowedImages(constraintTemplates) {
 
   // Log output
   if (!constraintDefined) {
-    console.log(chalk.red(`--- 'Only use allowed images' policy not applied`));
+    details.push({
+      status: ResultStatus.Fail,
+      message: "Only 'use allowed images' policy not applied"
+    }
+    );
   } else {
-    console.log(chalk.green("--- 'Only use allowed images' policy applied"));
+    details.push({
+      status: ResultStatus.Pass,
+      message: "'Only use allowed images' policy applied"
+    }
+    );
   }
 
   return {
     checkId: 'IMG-3',
-    status: constraintDefined.length? ResultStatus.Pass: ResultStatus.Fail,
-    severity: Severity.High
+    status: constraintDefined.length ? ResultStatus.Pass : ResultStatus.Fail,
+    severity: Severity.High,
+    details: details
   }
 }
 
@@ -37,6 +50,8 @@ export function checkForAllowedImages(constraintTemplates) {
 export function checkForRuntimeContainerSecurity(pods) {
 
   console.log(chalk.white("Checking for runtime container security tools..."));
+
+  let details = []
 
   // Determine if Aqua (kube-enforcer) is installed
   var aquaInstalled = pods
@@ -57,18 +72,30 @@ export function checkForRuntimeContainerSecurity(pods) {
   // Otherwise log the tool that was found
   var knownToolInstalled = aquaInstalled || anchoreInstalled || paloAltoInstalled;
   if (!knownToolInstalled) {
-    console.log(chalk.red(`--- A runtime container security tool was not found`));
+    details.push({
+      status: ResultStatus.Fail,
+      message: "A runtime container security tool was not found"
+    }
+    );
   }
   else {
-    if (aquaInstalled) console.log(chalk.green(`--- Aqua Kube-Enforcer was found`));
-    if (anchoreInstalled) console.log(chalk.green(`--- Anchore Engine was found`));
-    if (paloAltoInstalled) console.log(chalk.green(`--- Palo Alto Twistlock was found`));
+    let message = "";
+    if (aquaInstalled) message = "Aqua Kube-Enforcer was found";
+    if (anchoreInstalled) message = "Anchore Engine was found";
+    if (paloAltoInstalled) message = "Palo Alto Twistlock was found";
+
+    details.push({
+      status: ResultStatus.Pass,
+      message: message
+    }
+    );
   }
 
   return {
     checkId: 'IMG-4',
-    status: knownToolInstalled? ResultStatus.Pass: ResultStatus.Fail,
-    severity: Severity.Medium
+    status: knownToolInstalled ? ResultStatus.Pass : ResultStatus.Fail,
+    severity: Severity.Medium,
+    details: details
   }
 }
 
@@ -78,6 +105,8 @@ export function checkForRuntimeContainerSecurity(pods) {
 export async function checkForAksAcrRbacIntegration(clusterDetails, containerRegistries) {
 
   console.log(chalk.white("Checking for ACR/AKS RBAC integration for pulling images..."));
+
+  let details = []
 
   // Grab the kubelet identity from identity profile
   var identityProfile = clusterDetails.identityProfile;
@@ -99,14 +128,18 @@ export async function checkForAksAcrRbacIntegration(clusterDetails, containerReg
   }
 
   // Sanity check cluster identity
-   if (!kubeletIdentityObjectId) {
-     console.log(chalk.red('--- Could not determine cluster identity. Stopping check.'));
-     return {
-      checkId: 'IMG-3',
+  if (!kubeletIdentityObjectId) {
+    details.push({
+      status: ResultStatus.Pass,
+      message: "Could not determine cluster identity. Stopping check."
+    }
+    );
+    return {
+      checkId: 'IMG-5',
       status: ResultStatus.Fail,
       severity: Severity.High
     }
-   }
+  }
 
   // Grab the roles for the identity
   var commandResults = await executeCommand(`az role assignment list --assignee '${kubeletIdentityObjectId}' --all`);
@@ -117,20 +150,35 @@ export async function checkForAksAcrRbacIntegration(clusterDetails, containerReg
   containerRegistries.forEach(registry => {
     var regEx = new RegExp(`\/registries\/${registry.name}$`);
     if (!assignedRoles.some(x => x.roleDefinitionName == 'AcrPull' && regEx.test(x.scope)))
-      problemRegistries.push(registry.name);  
+      problemRegistries.push(registry.name);
   });
 
   // Log output
   if (problemRegistries.length) {
-    console.log(chalk.red(`--- ${problemRegistries.length} registries did not have AKS/ACR RBAC integration`));
+    let message = `${problemRegistries.length} registries did not have AKS/ACR RBAC integration`;
+
+    if (global.verbose) {
+      problemRegistries.forEach(x => message += `${EOL}${space}${x}`);
+    }
+
+    details.push({
+      status: ResultStatus.Fail,
+      message: message
+    }
+    );
   } else {
-    console.log(chalk.green("--- All registries have AKS/ACR RBAC integration"));
+    details.push({
+      status: ResultStatus.Pass,
+      message: "All registries have AKS/ACR RBAC integration"
+    }
+    );
   }
 
   return {
     checkId: 'IMG-5',
-    status: !problemRegistries.length? ResultStatus.Pass: ResultStatus.Fail,
-    severity: Severity.High
+    status: !problemRegistries.length ? ResultStatus.Pass : ResultStatus.Fail,
+    severity: Severity.High,
+    details: details
   }
 }
 
@@ -141,10 +189,15 @@ export function checkForPrivateEndpointsOnRegistries(containerRegistries) {
 
   console.log(chalk.white("Checking for private endpoints on container registries..."));
 
+  let details = []
+
   // If there are no container registries the test does not apply
   if (!containerRegistries.length) {
-
-    console.log(chalk.gray("--- No registries were specified. Skipping check"));
+    details.push({
+      status: ResultStatus.NotApply,
+      message: "No registries were specified. Skipping check"
+    }
+    );
 
     return {
       checkId: 'IMG-6',
@@ -159,15 +212,30 @@ export function checkForPrivateEndpointsOnRegistries(containerRegistries) {
 
   // Log output
   if (problemRegistries.length) {
-    console.log(chalk.red(`--- ${problemRegistries.length} registries did not have private endpoints configured`));
+    let message = `${problemRegistries.length} registries did not have private endpoints configured`;
+
+    if (global.verbose) {
+      problemRegistries.forEach(x => message += `${EOL}${space}${x.name}`);
+    }
+
+    details.push({
+      status: ResultStatus.Fail,
+      message: message
+    }
+    );
   } else {
-    console.log(chalk.green("--- All registries have private endpoints configured"));
+    details.push({
+      status: ResultStatus.Pass,
+      message: 'All registries have private endpoints configured'
+    }
+    );
   }
 
   return {
     checkId: 'IMG-6',
-    status: !problemRegistries.length? ResultStatus.Pass: ResultStatus.Fail,
-    severity: Severity.Medium
+    status: !problemRegistries.length ? ResultStatus.Pass : ResultStatus.Fail,
+    severity: Severity.Medium,
+    details: details
   }
 }
 
@@ -178,6 +246,8 @@ export function checkForNoPrivilegedContainers(constraintTemplates) {
 
   console.log(chalk.white("Checking for 'No privileged containers' policy..."));
 
+  let details = []
+
   // Check if no privileged containers constraint is defined
   var constraintDefined = constraintTemplates
     .items
@@ -185,14 +255,24 @@ export function checkForNoPrivilegedContainers(constraintTemplates) {
 
   // Log output
   if (!constraintDefined) {
-    console.log(chalk.red(`--- 'No privileged containers' policy not applied`));
+    details.push({
+      status: ResultStatus.Fail,
+      message: "'No privileged containers' policy not applied"
+    }
+    );
   } else {
     console.log(chalk.green("--- 'No privileged containers' policy applied"));
+    details.push({
+      status: ResultStatus.Pass,
+      message: "No privileged containers' policy applied"
+    }
+    );
   }
 
   return {
     checkId: 'IMG-8',
-    status: constraintDefined.length? ResultStatus.Pass: ResultStatus.Fail,
-    severity: Severity.High
+    status: constraintDefined.length ? ResultStatus.Pass : ResultStatus.Fail,
+    severity: Severity.High,
+    details: details
   }
 }
