@@ -100,9 +100,17 @@ export function checkForControlPlaneSla(clusterDetails) {
 
   // Log output
   if (!slaConfigured) {
-    console.log(chalk.red(`--- An SLA has not been configured for the control plane`));
+    details.push({
+      status: ResultStatus.Fail,
+      message: "An SLA has not been configured for the control plane"
+    }
+    );
   } else {
-    console.log(chalk.green("--- An SLA has been configured for the control plane"));
+    details.push({
+      status: ResultStatus.Pass,
+      message: "An SLA has been configured for the control plane"
+    }
+    );
   }
 
   return {
