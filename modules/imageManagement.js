@@ -185,10 +185,15 @@ export function checkForPrivateEndpointsOnRegistries(containerRegistries) {
 
   console.log(chalk.white("Checking for private endpoints on container registries..."));
 
+  let details = []
+
   // If there are no container registries the test does not apply
   if (!containerRegistries.length) {
-
-    console.log(chalk.gray("--- No registries were specified. Skipping check"));
+    details.push({
+      status: ResultStatus.NotApply,
+      message: "No registries were specified. Skipping check"
+    }
+    );
 
     return {
       checkId: 'IMG-6',
@@ -203,15 +208,30 @@ export function checkForPrivateEndpointsOnRegistries(containerRegistries) {
 
   // Log output
   if (problemRegistries.length) {
-    console.log(chalk.red(`--- ${problemRegistries.length} registries did not have private endpoints configured`));
+    let message = `${problemRegistries.length} registries did not have private endpoints configured`;
+
+    if (global.verbose) {
+      problemRegistries.forEach(x => message += `${EOL}${space}${x.name}`);
+    }
+
+    details.push({
+      status: ResultStatus.Fail,
+      message: message
+    }
+    );
   } else {
-    console.log(chalk.green("--- All registries have private endpoints configured"));
+    details.push({
+      status: ResultStatus.Pass,
+      message: 'All registries have private endpoints configured'
+    }
+    );
   }
 
   return {
     checkId: 'IMG-6',
     status: !problemRegistries.length? ResultStatus.Pass: ResultStatus.Fail,
-    severity: Severity.Medium
+    severity: Severity.Medium,
+    details: details
   }
 }
 
