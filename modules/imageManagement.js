@@ -51,6 +51,8 @@ export function checkForRuntimeContainerSecurity(pods) {
 
   console.log(chalk.white("Checking for runtime container security tools..."));
 
+  let details = []
+
   // Determine if Aqua (kube-enforcer) is installed
   var aquaInstalled = pods
     .items
@@ -70,18 +72,30 @@ export function checkForRuntimeContainerSecurity(pods) {
   // Otherwise log the tool that was found
   var knownToolInstalled = aquaInstalled || anchoreInstalled || paloAltoInstalled;
   if (!knownToolInstalled) {
-    console.log(chalk.red(`--- A runtime container security tool was not found`));
+    details.push({
+      status: ResultStatus.Fail,
+      message: "A runtime container security tool was not found"
+    }
+    );
   }
   else {
-    if (aquaInstalled) console.log(chalk.green(`--- Aqua Kube-Enforcer was found`));
-    if (anchoreInstalled) console.log(chalk.green(`--- Anchore Engine was found`));
-    if (paloAltoInstalled) console.log(chalk.green(`--- Palo Alto Twistlock was found`));
+    let message = "";
+    if (aquaInstalled) message = "Aqua Kube-Enforcer was found";
+    if (anchoreInstalled) message = "Anchore Engine was found";
+    if (paloAltoInstalled) message = "Palo Alto Twistlock was found";
+
+    details.push({
+      status: ResultStatus.Pass,
+      message: "Velero is installed"
+    }
+    );
   }
 
   return {
     checkId: 'IMG-4',
     status: knownToolInstalled? ResultStatus.Pass: ResultStatus.Fail,
-    severity: Severity.Medium
+    severity: Severity.Medium,
+    details: details
   }
 }
 
