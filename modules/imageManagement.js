@@ -38,7 +38,7 @@ export function checkForAllowedImages(constraintTemplates) {
 
   return {
     checkId: 'IMG-3',
-    status: constraintDefined.length? ResultStatus.Pass: ResultStatus.Fail,
+    status: constraintDefined.length ? ResultStatus.Pass : ResultStatus.Fail,
     severity: Severity.High,
     details: details
   }
@@ -93,7 +93,7 @@ export function checkForRuntimeContainerSecurity(pods) {
 
   return {
     checkId: 'IMG-4',
-    status: knownToolInstalled? ResultStatus.Pass: ResultStatus.Fail,
+    status: knownToolInstalled ? ResultStatus.Pass : ResultStatus.Fail,
     severity: Severity.Medium,
     details: details
   }
@@ -128,18 +128,18 @@ export async function checkForAksAcrRbacIntegration(clusterDetails, containerReg
   }
 
   // Sanity check cluster identity
-   if (!kubeletIdentityObjectId) {
-     details.push({
+  if (!kubeletIdentityObjectId) {
+    details.push({
       status: ResultStatus.Pass,
       message: "Could not determine cluster identity. Stopping check."
     }
     );
-     return {
+    return {
       checkId: 'IMG-5',
       status: ResultStatus.Fail,
       severity: Severity.High
     }
-   }
+  }
 
   // Grab the roles for the identity
   var commandResults = await executeCommand(`az role assignment list --assignee '${kubeletIdentityObjectId}' --all`);
@@ -150,7 +150,7 @@ export async function checkForAksAcrRbacIntegration(clusterDetails, containerReg
   containerRegistries.forEach(registry => {
     var regEx = new RegExp(`\/registries\/${registry.name}$`);
     if (!assignedRoles.some(x => x.roleDefinitionName == 'AcrPull' && regEx.test(x.scope)))
-      problemRegistries.push(registry.name);  
+      problemRegistries.push(registry.name);
   });
 
   // Log output
@@ -172,7 +172,7 @@ export async function checkForAksAcrRbacIntegration(clusterDetails, containerReg
 
   return {
     checkId: 'IMG-5',
-    status: !problemRegistries.length? ResultStatus.Pass: ResultStatus.Fail,
+    status: !problemRegistries.length ? ResultStatus.Pass : ResultStatus.Fail,
     severity: Severity.High,
     details: details
   }
@@ -229,7 +229,7 @@ export function checkForPrivateEndpointsOnRegistries(containerRegistries) {
 
   return {
     checkId: 'IMG-6',
-    status: !problemRegistries.length? ResultStatus.Pass: ResultStatus.Fail,
+    status: !problemRegistries.length ? ResultStatus.Pass : ResultStatus.Fail,
     severity: Severity.Medium,
     details: details
   }
@@ -267,7 +267,7 @@ export function checkForNoPrivilegedContainers(constraintTemplates) {
 
   return {
     checkId: 'IMG-8',
-    status: constraintDefined.length? ResultStatus.Pass: ResultStatus.Fail,
+    status: constraintDefined.length ? ResultStatus.Pass : ResultStatus.Fail,
     severity: Severity.High,
     details: details
   }
