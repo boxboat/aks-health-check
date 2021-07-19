@@ -2,6 +2,9 @@ import chalk from "chalk"
 import { equalsIgnoreCase } from '../helpers/stringCompare.js';
 import { ResultStatus } from '../helpers/commandStatus.js';
 import { Severity } from '../helpers/commandSeverity.js';
+import { EOL } from 'os';
+
+const space = '            '
 
 //
 // Checks if the cluster has agent pools without multiple availability zones
@@ -19,9 +22,23 @@ export function checkForAvailabilityZones(clusterDetails) {
 
   // Log output
   if (agentPoolsWithNoAzs.length) {
-    console.log(chalk.red(`--- Found ${agentPoolsWithNoAzs.length} agent pools without multiple availability zones`));
+    let message = `Found ${agentPoolsWithNoAzs.length} agent pools without multiple availability zones`;
+
+    if (global.verbose) {
+      agentPoolsWithNoAzs.forEach(x => message += `${EOL}${space}${x.name}`);
+    }
+
+    details.push({
+      status: ResultStatus.Fail,
+      message: message
+    }
+    );
   } else {
-    console.log(chalk.green("--- All agent pools have multiple availability zones"));
+    details.push({
+      status: ResultStatus.Pass,
+      message: 'All agent pools have multiple availability zones'
+    }
+    );
   }
 
   return {
