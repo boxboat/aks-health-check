@@ -13,7 +13,7 @@ export function checkForAvailabilityZones(clusterDetails) {
 
   console.log(chalk.white("Checking for agent pools without multiple availability zones..."));
 
-  let details = []  
+  let details = []
 
   // Find agent pools with either no AZ's or a single AZ
   var agentPoolsWithNoAzs = clusterDetails
@@ -43,7 +43,7 @@ export function checkForAvailabilityZones(clusterDetails) {
 
   return {
     checkId: 'DR-2',
-    status: !agentPoolsWithNoAzs.length? ResultStatus.Pass: ResultStatus.Fail,
+    status: !agentPoolsWithNoAzs.length ? ResultStatus.Pass : ResultStatus.Fail,
     severity: Severity.High,
     details: details
   }
@@ -80,7 +80,7 @@ export function checkForVelero(pods) {
 
   return {
     checkId: 'DR-5',
-    status: veleroInstalled.length? ResultStatus.Pass: ResultStatus.Fail,
+    status: veleroInstalled.length ? ResultStatus.Pass : ResultStatus.Fail,
     severity: Severity.Medium,
     details: details
   }
@@ -115,7 +115,7 @@ export function checkForControlPlaneSla(clusterDetails) {
 
   return {
     checkId: 'DR-6',
-    status: slaConfigured.length? ResultStatus.Pass: ResultStatus.Fail,
+    status: slaConfigured.length ? ResultStatus.Pass : ResultStatus.Fail,
     severity: Severity.High,
     details: details
   }
