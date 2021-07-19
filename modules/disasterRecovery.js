@@ -65,9 +65,17 @@ export function checkForVelero(pods) {
 
   // Log output
   if (!veleroInstalled) {
-    console.log(chalk.red(`--- Velero is not installed`));
+    details.push({
+      status: ResultStatus.Fail,
+      message: "Velero is not installed"
+    }
+    );
   } else {
-    console.log(chalk.green("--- Velero is installed"));
+    details.push({
+      status: ResultStatus.Pass,
+      message: "Velero is installed"
+    }
+    );
   }
 
   return {
