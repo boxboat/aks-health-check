@@ -10,6 +10,8 @@ export function checkForAvailabilityZones(clusterDetails) {
 
   console.log(chalk.white("Checking for agent pools without multiple availability zones..."));
 
+  let details = []  
+
   // Find agent pools with either no AZ's or a single AZ
   var agentPoolsWithNoAzs = clusterDetails
     .agentPoolProfiles
@@ -25,7 +27,8 @@ export function checkForAvailabilityZones(clusterDetails) {
   return {
     checkId: 'DR-2',
     status: !agentPoolsWithNoAzs.length? ResultStatus.Pass: ResultStatus.Fail,
-    severity: Severity.High
+    severity: Severity.High,
+    details: details
   }
 }
 
@@ -35,6 +38,8 @@ export function checkForAvailabilityZones(clusterDetails) {
 export function checkForVelero(pods) {
 
   console.log(chalk.white("Checking for Velero..."));
+
+  let details = []
 
   // Check if Velero is installed
   var veleroInstalled = pods
@@ -51,7 +56,8 @@ export function checkForVelero(pods) {
   return {
     checkId: 'DR-5',
     status: veleroInstalled.length? ResultStatus.Pass: ResultStatus.Fail,
-    severity: Severity.Medium
+    severity: Severity.Medium,
+    details: details
   }
 }
 
@@ -61,6 +67,8 @@ export function checkForVelero(pods) {
 export function checkForControlPlaneSla(clusterDetails) {
 
   console.log(chalk.white("Checking for SLA for control plane..."));
+
+  let details = []
 
   // Check if SLA is configured for the management plane
   var slaConfigured = clusterDetails.sku.tier == "Paid";
@@ -75,6 +83,7 @@ export function checkForControlPlaneSla(clusterDetails) {
   return {
     checkId: 'DR-6',
     status: slaConfigured.length? ResultStatus.Pass: ResultStatus.Fail,
-    severity: Severity.High
+    severity: Severity.High,
+    details: details
   }
 }
