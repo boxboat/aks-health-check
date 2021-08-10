@@ -9,6 +9,8 @@ At BoxBoat, we guide our customers with the use of Kubernetes and surrounding ec
 
 There are many best-practices and some of these are subjective. So, we also have a companion Google Doc template that we use to keep track of results and findings.
 
+📢 [Blog Post](https://boxboat.com/2021/08/04/aks-health-check/)
+
 📄 [The Google Doc AKS Health Check Template](https://bit.ly/boxboat-health-check-report-template-v2) 📄
 
 ## Option A - Run with Current User (Preferred 🌟)
