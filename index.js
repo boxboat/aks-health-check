@@ -69,7 +69,7 @@ function showTableFromResults(results) {
   Total checks that failed: ${chalk.red(resultsThatFailedCount)}/${chalk.blueBright(resultsRanCount)}
 
   But, there are still ${chalk.yellow(manualChecksCount)} checks that need to be performed manually. 
-  Here's the document we use at BoxBoat 📄 ${chalk.underline('http://bit.ly/boxboat-health-check-report-template')} 
+  Here's the document we use at BoxBoat 📄 ${chalk.underline('https://bit.ly/boxboat-health-check-report-template-v2')} 
   Copy it, it should help you keep track of everything.
   `));
   console.log(chalk.bgBlueBright('                                                              '));
