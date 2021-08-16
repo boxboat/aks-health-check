@@ -194,7 +194,7 @@ export function checkForServiceMesh(deployments, pods) {
   if (!knownMeshInstalled) {
     details.push({
       status:  ResultStatus.NotApply,
-      message: "Kubernetes dashboard is not installed"}
+      message: "No service mesh installed"}
       );
   }
   else {
