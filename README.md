@@ -176,6 +176,11 @@ There are about 50+ best-practice recommendations for Azure Kubernetes Service (
 | `CSM-7`     | Manual    | Configure distributed tracing |
 | `CSM-8`     | Manual    | Enable Azure Policy |
 
+## Special Thanks 🙏
+
+This project was inspired by the great work of [The AKS Checklist](https://www.the-aks-checklist.com/). Without seeing this, we would have not embarked on this journey.
+We were excited because it seemed like a great way to quickly go through MSFT's best practices, then build a report. 
+Through practice, we decided to create a Google Doc for the report instead. This allowed us to provide more nuanced answers like "it depends" or "yes, but" or "no, but". 
 
 ## Developing
 
