@@ -114,7 +114,7 @@ az group delete -g $RESOURCE_GROUP
 
 ## The Checks
 
-There are about 50+ best-practice recommendations for Azure Kubernetes Service (AKS). This tool helps the discovery and examination of 22 checks. The rest are either not automated yet, or they will never be since they require more context about the business, a conversation, and ultimately a judgement call.
+There are about 50+ best-practice recommendations for Azure Kubernetes Service (AKS). This tool helps the discovery and examination of 23 checks. The rest are either not automated yet, or they will never be since they require more context about the business, a conversation, and ultimately a judgement call.
 
 | Check ID    | Manual/Automated | Description |
 | ----------- | ---------------- | ---------------- |
