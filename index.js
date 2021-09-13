@@ -162,6 +162,7 @@ async function checkAzure(options) {
   results.push(ClusterSetup.checkForManagedAadIntegration(clusterDetails));
   results.push(ClusterSetup.checkForAutoscale(clusterDetails));
   results.push(ClusterSetup.checkForMultipleNodePools(clusterDetails));
+  results.push(ClusterSetup.checkForAzurePolicy(clusterDetails));
 
   console.log();
   console.log(chalk.bgWhite(chalk.black('               Scanning Disaster Recovery Items               ')));
