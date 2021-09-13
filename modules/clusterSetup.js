@@ -260,10 +260,11 @@ export function checkForAzurePolicy(clusterDetails) {
   let details = [];
 
   // Check if Azure policy is enabled
-  var azurepolicyConfigured = clusterDetails.addonProfiles.azurepolicy.enabled;
+  var azurePolicy = clusterDetails.addonProfiles.azurepolicy;
+  var azurePolicyConfigured = azurePolicy && azurePolicy.enabled;
 
   // Log output
-  if (!azurepolicyConfigured) {
+  if (!azurePolicyConfigured) {
     details.push({
       status:  ResultStatus.Fail,
       message: "Azure Policy is not enabled"}
@@ -277,7 +278,7 @@ export function checkForAzurePolicy(clusterDetails) {
 
   return {
     checkId: 'CSP-10',
-    status: azurepolicyConfigured? ResultStatus.Pass: ResultStatus.Fail,
+    status: azurePolicyConfigured? ResultStatus.Pass: ResultStatus.Fail,
     severity: Severity.Medium,
     details: details
   }
