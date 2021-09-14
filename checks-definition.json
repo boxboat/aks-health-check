@@ -124,8 +124,6 @@
         "description": "Enable Azure Policy"
     },
     {
-<<<<<<< Updated upstream
-=======
         "checkId": "CSP-11",
         "description": "Enable Azure RBAC"
     },
@@ -134,7 +132,6 @@
         "description": "Use Azure AD to pull container images"
     },
     {
->>>>>>> Stashed changes
         "checkId": "DR-1",
         "description": "Ensure you can perform a whitespace deployment"
     },

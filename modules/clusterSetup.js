@@ -317,3 +317,4 @@ export function checkForAadRBAC(clusterDetails) {
     details: details
   }
 }
+
