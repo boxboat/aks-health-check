@@ -148,6 +148,7 @@ There are about 50+ best-practice recommendations for Azure Kubernetes Service (
 | `CSP-8`     | Manual    | Use Azure AD to pull container images |
 | `CSP-9`     | Manual    | Use system and user node pools |
 | `CSP-10`    | Automated | Enable Azure Policy |
+| `CSP-11`    | Automated | Enable Azure RBAC |
 | `DR-1`      | Manual    | Ensure you can perform a whitespace deployment |
 | `DR-2`      | Automated | Use availability zones for node pools |
 | `DR-3`      | Manual    | Plan for a multi-region deployment |

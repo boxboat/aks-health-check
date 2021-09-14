@@ -124,6 +124,10 @@
         "description": "Enable Azure Policy"
     },
     {
+        "checkId": "CSP-11",
+        "description": "Enable Azure RBAC"
+    },
+    {
         "checkId": "DR-1",
         "description": "Ensure you can perform a whitespace deployment"
     },

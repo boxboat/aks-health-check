@@ -1,4 +1,4 @@
-FROM mcr.microsoft.com/azure-cli:2.9.1
+FROM mcr.microsoft.com/azure-cli:2.27.1
 
 RUN apk add --update nodejs nodejs-npm
 RUN az aks install-cli
