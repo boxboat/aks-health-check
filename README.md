@@ -137,7 +137,7 @@ There are about 50+ best-practice recommendations for Azure Kubernetes Service (
 | `IMG-5`     | Automated | Configure image pull RBAC for azure container registry |
 | `IMG-6`     | Automated | Isolate azure container registries |
 | `IMG-7`     | Manual    | Utilize minimal base images |
-| `IMG-8`     | Manual    | Forbid the use of privileged containers |
+| `IMG-8`     | Automated | Forbid the use of privileged containers |
 | `CSP-1`     | Manual    | Logically isolate the cluster |
 | `CSP-2`     | Automated | Isolate the Kubernetes control plane |
 | `CSP-3`     | Automated | Enable Azure AD integration |
@@ -145,7 +145,7 @@ There are about 50+ best-practice recommendations for Azure Kubernetes Service (
 | `CSP-5`     | Manual    | Ensure nodes are correctly sized |
 | `CSP-6`     | Manual    | Create a process for base image updates |
 | `CSP-7`     | Automated | Ensure the Kubernetes dashboard is not installed |
-| `CSP-8`     | Manual    | Use system and user node pools |
+| `CSP-8`     | Automated | Use system and user node pools |
 | `CSP-9`     | Automated | Enable Azure Policy |
 | `CSP-10`    | Automated | Enable Azure RBAC |
 | `DR-1`      | Manual    | Ensure you can perform a whitespace deployment |
@@ -168,7 +168,7 @@ There are about 50+ best-practice recommendations for Azure Kubernetes Service (
 | `NET-6`     | Manual    | Control traffic flow with network policies |
 | `NET-7`     | Manual    | Route egress traffic through a firewall |
 | `NET-8`     | Manual    | Do not expose worker nodes to public internet |
-| `NET-9`     | Manual    | Utilize a service mesh (optional) |
+| `NET-9`     | Automated | Utilize a service mesh (optional) |
 | `NET-10`    | Manual    | Configure distributed tracing |
 | `CSM-1`     | Manual    | Keep Kubernetes version up to date |
 | `CSM-2`     | Manual    | Keep nodes up to date and patched |
