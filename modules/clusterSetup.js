@@ -284,7 +284,6 @@ export function checkForAzurePolicy(clusterDetails) {
   }
 }
 
-
 //
 // Checks if the cluster has Azure Active Directory RBAC enabled
 //
@@ -318,3 +317,4 @@ export function checkForAadRBAC(clusterDetails) {
     details: details
   }
 }
+
