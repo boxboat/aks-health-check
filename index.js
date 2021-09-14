@@ -246,10 +246,8 @@ async function checkKubernetes(options) {
   // Check image management items
   console.log();
   console.log(chalk.bgWhite(chalk.black('               Scanning Image Management Items               ')));
-  if (hasConstraintTemplates) {
-    results.push(ImageManagement.checkForAllowedImages(constraintTemplates));
-    results.push(ImageManagement.checkForNoPrivilegedContainers(constraintTemplates));
-  }
+  results.push(ImageManagement.checkForAllowedImages(constraintTemplates));
+  results.push(ImageManagement.checkForNoPrivilegedContainers(constraintTemplates));
   results.push(ImageManagement.checkForRuntimeContainerSecurity(pods));
 
   // Check cluster setup items

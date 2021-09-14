@@ -17,7 +17,7 @@ export function checkForAllowedImages(constraintTemplates) {
   let details = []
 
   // Check if allowed images constraint is defined
-  var constraintDefined = constraintTemplates
+  var constraintDefined = constraintTemplates && constraintTemplates
     .items
     .some(x => equalsIgnoreCase(x.metadata.name, 'k8sazurecontainerallowedimages'));
 
@@ -38,7 +38,7 @@ export function checkForAllowedImages(constraintTemplates) {
 
   return {
     checkId: 'IMG-3',
-    status: constraintDefined.length ? ResultStatus.Pass : ResultStatus.Fail,
+    status: constraintDefined ? ResultStatus.Pass : ResultStatus.Fail,
     severity: Severity.High,
     details: details
   }
@@ -249,7 +249,7 @@ export function checkForNoPrivilegedContainers(constraintTemplates) {
   let details = []
 
   // Check if no privileged containers constraint is defined
-  var constraintDefined = constraintTemplates
+  var constraintDefined = constraintTemplates && constraintTemplates
     .items
     .some(x => equalsIgnoreCase(x.metadata.name, 'k8sazurecontainernoprivilege'));
 
@@ -271,7 +271,7 @@ export function checkForNoPrivilegedContainers(constraintTemplates) {
 
   return {
     checkId: 'IMG-8',
-    status: constraintDefined.length ? ResultStatus.Pass : ResultStatus.Fail,
+    status: constraintDefined ? ResultStatus.Pass : ResultStatus.Fail,
     severity: Severity.High,
     details: details
   }
