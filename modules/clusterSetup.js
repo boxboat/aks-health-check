@@ -283,3 +283,38 @@ export function checkForAzurePolicy(clusterDetails) {
     details: details
   }
 }
+
+//
+// Checks if the cluster has Azure Active Directory RBAC enabled
+//
+export function checkForAadRBAC(clusterDetails) {
+
+  console.log(chalk.white("Checking for Azure Active Directory RBAC..."));
+
+  let details = [];
+
+  // Check if aad RBAC is configured
+  var aadRBACConfigured = clusterDetails.aadProfile && clusterDetails.aadProfile.managed && clusterDetails.aadProfile.enableAzureRbac;
+
+  // Log output
+  if (!aadRBACConfigured) {
+    details.push({
+      status:  ResultStatus.Fail,
+      message: "Azure Active Directory RBAC is not configured"}
+      );
+  }
+  else {
+    details.push({
+      status:  ResultStatus.Pass,
+      message: "Azure Active Directory RBAC is configured"}
+      );
+  }
+
+  return {
+    checkId: 'CSP-11',
+    status: aadRBACConfigured? ResultStatus.Pass: ResultStatus.Fail,
+    severity: Severity.High,
+    details: details
+  }
+}
+
