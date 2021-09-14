@@ -113,18 +113,14 @@
     },
     {
         "checkId": "CSP-8",
-        "description": "Use Azure AD to pull container images"
-    },
-    {
-        "checkId": "CSP-9",
         "description": "Use system and user node pools"
     },
     {
-        "checkId": "CSP-10",
+        "checkId": "CSP-9",
         "description": "Enable Azure Policy"
     },
     {
-        "checkId": "CSP-11",
+        "checkId": "CSP-10",
         "description": "Enable Azure RBAC"
     },
     {
@@ -208,6 +204,14 @@
         "description": "Do not expose worker nodes to public internet"
     },
     {
+        "checkId": "NET-9",
+        "description": "Utilize a service mesh (optional)"
+    },
+    {
+        "checkId": "NET-10",
+        "description": "Configure distributed tracing"
+    },
+    {
         "checkId": "CSM-1",
         "description": "Keep Kubernetes version up to date"
     },
@@ -230,9 +234,5 @@
     {
         "checkId": "CSM-6",
         "description": "Collect metrics"
-    },
-    {
-        "checkId": "CSM-7",
-        "description": "Configure distributed tracing"
     }
 ]

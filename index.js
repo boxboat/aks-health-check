@@ -10,6 +10,7 @@ import * as Development from './modules/development.js';
 import * as ImageManagement from './modules/imageManagement.js';
 import * as ClusterSetup from './modules/clusterSetup.js';
 import * as DisasterRecovery from './modules/disasterRecovery.js';
+import * as Networking from './modules/networking.js';
 import { equalsIgnoreCase } from './helpers/stringCompare.js';
 import * as fs from 'fs';
 import { ResultStatus } from './helpers/commandStatus.js';
@@ -255,12 +256,16 @@ async function checkKubernetes(options) {
   console.log();
   console.log(chalk.bgWhite(chalk.black('               Scanning Cluster Setup Items               ')));
   results.push(await ClusterSetup.checkForKubernetesDashboard(pods));
-  results.push(ClusterSetup.checkForServiceMesh(deployments, pods));
 
   // Check disaster recovery items
   console.log();
   console.log(chalk.bgWhite(chalk.black('               Scanning Disaster Recovery Items               ')));
   results.push(DisasterRecovery.checkForVelero(pods));
+
+  // Check networking items
+  console.log();
+  console.log(chalk.bgWhite(chalk.black('               Scanning Networking Items               ')));
+  results.push(Networking.checkForServiceMesh(deployments, pods));
 
   return results;
 }
