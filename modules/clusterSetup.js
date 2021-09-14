@@ -249,3 +249,37 @@ export function checkForMultipleNodePools(clusterDetails) {
     details: details
   }
 }
+
+//
+// Checks if Azure Policy is enabled on Cluster
+//
+export function checkForAzurePolicy(clusterDetails) {
+
+  console.log(chalk.white("Checking for Azure Policy on cluster..."));
+
+  let details = [];
+
+  // Check if Azure policy is enabled
+  var azurePolicy = clusterDetails.addonProfiles.azurepolicy;
+  var azurePolicyConfigured = azurePolicy && azurePolicy.enabled;
+
+  // Log output
+  if (!azurePolicyConfigured) {
+    details.push({
+      status:  ResultStatus.Fail,
+      message: "Azure Policy is not enabled"}
+      );
+  } else {
+    details.push({
+      status:  ResultStatus.Pass,
+      message: "Azure Policy is enabled"}
+      );
+  }
+
+  return {
+    checkId: 'CSP-10',
+    status: azurePolicyConfigured? ResultStatus.Pass: ResultStatus.Fail,
+    severity: Severity.Medium,
+    details: details
+  }
+}

@@ -120,6 +120,10 @@
         "description": "Use system and user node pools"
     },
     {
+        "checkId": "CSP-10",
+        "description": "Enable Azure Policy"
+    },
+    {
         "checkId": "DR-1",
         "description": "Ensure you can perform a whitespace deployment"
     },
@@ -226,9 +230,5 @@
     {
         "checkId": "CSM-7",
         "description": "Configure distributed tracing"
-    },
-    {
-        "checkId": "CSM-8",
-        "description": "Enable Azure Policy"
     }
 ]

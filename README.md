@@ -114,7 +114,7 @@ az group delete -g $RESOURCE_GROUP
 
 ## The Checks
 
-There are about 50+ best-practice recommendations for Azure Kubernetes Service (AKS). This tool helps the discovery and examination of 22 checks. The rest are either not automated yet, or they will never be since they require more context about the business, a conversation, and ultimately a judgement call.
+There are about 50+ best-practice recommendations for Azure Kubernetes Service (AKS). This tool helps the discovery and examination of 23 checks. The rest are either not automated yet, or they will never be since they require more context about the business, a conversation, and ultimately a judgement call.
 
 | Check ID    | Manual/Automated | Description |
 | ----------- | ---------------- | ---------------- |
@@ -147,6 +147,7 @@ There are about 50+ best-practice recommendations for Azure Kubernetes Service (
 | `CSP-7`     | Automated | Ensure the Kubernetes dashboard is not installed |
 | `CSP-8`     | Manual    | Use Azure AD to pull container images |
 | `CSP-9`     | Manual    | Use system and user node pools |
+| `CSP-10`    | Automated | Enable Azure Policy |
 | `DR-1`      | Manual    | Ensure you can perform a whitespace deployment |
 | `DR-2`      | Automated | Use availability zones for node pools |
 | `DR-3`      | Manual    | Plan for a multi-region deployment |
@@ -174,7 +175,7 @@ There are about 50+ best-practice recommendations for Azure Kubernetes Service (
 | `CSM-5`     | Manual    | Enable master node logs |
 | `CSM-6`     | Manual    | Collect metrics |
 | `CSM-7`     | Manual    | Configure distributed tracing |
-| `CSM-8`     | Manual    | Enable Azure Policy |
+
 
 ## Special Thanks 🙏
 
