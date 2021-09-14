@@ -113,7 +113,7 @@
     },
     {
         "checkId": "CSP-8",
-        "description": "Use Azure AD to pull container images"
+        "description": "Use a known service mesh (Optional)"
     },
     {
         "checkId": "CSP-9",
@@ -124,6 +124,17 @@
         "description": "Enable Azure Policy"
     },
     {
+<<<<<<< Updated upstream
+=======
+        "checkId": "CSP-11",
+        "description": "Enable Azure RBAC"
+    },
+    {
+        "checkId": "CSP-12",
+        "description": "Use Azure AD to pull container images"
+    },
+    {
+>>>>>>> Stashed changes
         "checkId": "DR-1",
         "description": "Ensure you can perform a whitespace deployment"
     },
