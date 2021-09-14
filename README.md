@@ -114,7 +114,7 @@ az group delete -g $RESOURCE_GROUP
 
 ## The Checks
 
-There are about 50+ best-practice recommendations for Azure Kubernetes Service (AKS). This tool helps the discovery and examination of 23 checks. The rest are either not automated yet, or they will never be since they require more context about the business, a conversation, and ultimately a judgement call.
+There are about 50+ best-practice recommendations for Azure Kubernetes Service (AKS). This tool helps the discovery and examination of a number of those checks. The rest are either not automated yet, or they will never be since they require more context about the business, a conversation, and ultimately a judgement call.
 
 | Check ID    | Manual/Automated | Description |
 | ----------- | ---------------- | ---------------- |
@@ -145,10 +145,9 @@ There are about 50+ best-practice recommendations for Azure Kubernetes Service (
 | `CSP-5`     | Manual    | Ensure nodes are correctly sized |
 | `CSP-6`     | Manual    | Create a process for base image updates |
 | `CSP-7`     | Automated | Ensure the Kubernetes dashboard is not installed |
-| `CSP-8`     | Manual    | Use Azure AD to pull container images |
-| `CSP-9`     | Manual    | Use system and user node pools |
-| `CSP-10`    | Automated | Enable Azure Policy |
-| `CSP-11`    | Automated | Enable Azure RBAC |
+| `CSP-8`     | Manual    | Use system and user node pools |
+| `CSP-9`     | Automated | Enable Azure Policy |
+| `CSP-10`    | Automated | Enable Azure RBAC |
 | `DR-1`      | Manual    | Ensure you can perform a whitespace deployment |
 | `DR-2`      | Automated | Use availability zones for node pools |
 | `DR-3`      | Manual    | Plan for a multi-region deployment |
@@ -169,13 +168,14 @@ There are about 50+ best-practice recommendations for Azure Kubernetes Service (
 | `NET-6`     | Manual    | Control traffic flow with network policies |
 | `NET-7`     | Manual    | Route egress traffic through a firewall |
 | `NET-8`     | Manual    | Do not expose worker nodes to public internet |
+| `NET-9`     | Manual    | Utilize a service mesh (optional) |
+| `NET-10`    | Manual    | Configure distributed tracing |
 | `CSM-1`     | Manual    | Keep Kubernetes version up to date |
 | `CSM-2`     | Manual    | Keep nodes up to date and patched |
 | `CSM-3`     | Manual    | Monitor cluster security using Azure Security Center |
 | `CSM-4`     | Manual    | Provision a log aggregation tool |
 | `CSM-5`     | Manual    | Enable master node logs |
 | `CSM-6`     | Manual    | Collect metrics |
-| `CSM-7`     | Manual    | Configure distributed tracing |
 
 
 ## Special Thanks 🙏
