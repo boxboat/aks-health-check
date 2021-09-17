@@ -217,13 +217,17 @@ async function checkKubernetes(options) {
   console.log(chalk.blue("Fetching all Horizontal Pod AutoScalers..."));
   var autoScalers = await getKubernetesJson('kubectl get hpa --all-namespaces', options);
 
+  // Fetch all the constraint templates (Open Policy Agent)
   var hasConstraintTemplates = await doesResourceExist("constrainttemplates");
   var constraintTemplates = null;
   if (hasConstraintTemplates) {
-    // Fetch all the constraint templates (Open Policy Agent)
     console.log(chalk.blue("Fetching all Constraint Templates..."));
     constraintTemplates = await getKubernetesJson('kubectl get constrainttemplate');
   }
+
+  // Fetch all the pod disruption budgets
+  console.log(chalk.blue("Fetching all Pod Disruption Budgets..."));
+  var pdbs = await getKubernetesJson('kubectl get pdb --all-namespaces', options);
 
   let results = [];
 
@@ -238,10 +242,10 @@ async function checkKubernetes(options) {
   results.push(Development.checkForTags([namespaces.items, pods.items, deployments.items, services.items, configMaps.items, secrets.items]));
   results.push(Development.checkForHorizontalPodAutoscalers(namespaces, autoScalers));
   results.push(Development.checkForAzureSecretsStoreProvider(pods));
-
   results.push(Development.checkForPodsInDefaultNamespace(pods));
   results.push(Development.checkForPodsWithoutRequestsOrLimits(pods));
   results.push(Development.checkForPodsWithDefaultSecurityContext(pods));
+  results.push(Development.checkForPodDisruptionBudgets(pdbs));
 
   // Check image management items
   console.log();

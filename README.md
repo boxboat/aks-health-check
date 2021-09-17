@@ -129,7 +129,7 @@ There are about 50+ best-practice recommendations for Azure Kubernetes Service (
 | `DEV-9`     | Automated | Use kubernetes namespaces |
 | `DEV-10`    | Automated | Setup resource requests and limits on containers |
 | `DEV-11`    | Automated | Specify security context for pods or containers |
-| `DEV-12`    | Manual    | Configure pod disruption budgets |
+| `DEV-12`    | Automated | Configure pod disruption budgets |
 | `IMG-1`     | Manual    | Define image security best practices |
 | `IMG-2`     | Manual    | Scan container images during CI/CD pipelines |
 | `IMG-3`     | Automated | Allow pulling containers only from allowed registries |
