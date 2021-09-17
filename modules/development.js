@@ -528,3 +528,41 @@ export function checkForPodsWithDefaultSecurityContext(pods) {
     details: details
   }
 }
+
+//
+// Checks for pod disruption budgets
+//
+export function checkForPodDisruptionBudgets(pdbs) {
+
+  console.log(chalk.white("Checking for pod disruption budgets..."));
+
+  let details = []
+
+  // Log output
+  if (pdbs.items.length) {
+
+    let message = `Found ${pdbs.items.length} pod disruption budgets`;
+
+    // Print out PDBs for verbose logging
+    if (global.verbose) {
+      pdbs.items.forEach(x => message += `${EOL}${space}${x.metadata.namespace}/${x.metadata.name}`);
+    }
+
+    details.push({
+      status: ResultStatus.Pass,
+      message: message
+    });
+  } else {
+    details.push({
+      status: ResultStatus.Fail,
+      message: 'No pod disruption budgets were found'
+    });
+  }
+
+  return {
+    checkId: 'DEV-12',
+    status: details[0].status,
+    severity: Severity.Low,
+    details: details
+  }
+}
