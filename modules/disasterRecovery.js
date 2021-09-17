@@ -1,5 +1,6 @@
 import chalk from "chalk"
 import { equalsIgnoreCase } from '../helpers/stringCompare.js';
+import { executeCommand } from '../helpers/commandHelpers.js';
 import { ResultStatus } from '../helpers/commandStatus.js';
 import { Severity } from '../helpers/commandSeverity.js';
 import { EOL } from 'os';
@@ -117,6 +118,93 @@ export function checkForControlPlaneSla(clusterDetails) {
     checkId: 'DR-6',
     status: slaConfigured.length ? ResultStatus.Pass : ResultStatus.Fail,
     severity: Severity.High,
+    details: details
+  }
+}
+
+//
+// Checks if replication is enabled on container registries
+//
+export async function checkForContainerRegistryReplication(containerRegistries) {
+
+  console.log(chalk.white("Checking for container registry replication..."));
+
+  let details = []
+
+  // If there are no container registries the test does not apply
+  if (!containerRegistries.length) {
+    details.push({
+      status: ResultStatus.NotApply,
+      message: "No registries were specified. Skipping check"
+    });
+
+    return {
+      checkId: 'DR-7',
+      status: ResultStatus.NotApply,
+      severity: Severity.Medium,
+      details: details
+    }
+  }
+
+  // Figure out the registries that do not have replication
+  var registriesWithoutReplication = [];
+  for (const registry of containerRegistries) {
+
+    // Non-premium registries are always without replication
+    if (!equalsIgnoreCase(registry.sku.name, 'premium')) {
+      registriesWithoutReplication.push(registry.name);
+      continue;
+    }
+
+    // For premium registries we need to query replications
+    try {
+      var commandResults = await executeCommand(`az acr replication list -r ${registry.name}`);
+      var registryReplications = JSON.parse(commandResults.stdout);
+      if (registryReplications.length <= 1)
+        registriesWithoutReplication.push(registry.name);
+    }
+
+    // If an error happens this abort the run
+    catch (e) {
+      details.push({
+        status: ResultStatus.Fail,
+        message: `An error occurred retrieving ACR replications: ${e}`
+      });
+  
+      return {
+        checkId: 'DR-7',
+        status: ResultStatus.Fail,
+        severity: Severity.Medium,
+        details: details
+      };
+    }
+  }
+
+  // Log output
+  if (registriesWithoutReplication.length > 0) {
+
+    let message = `Found ${registriesWithoutReplication.length} container registries without replication`;
+
+    // Print out registries without replication for verbose logging
+    if (global.verbose) {
+      registriesWithoutReplication.forEach(x => message += `${EOL}${space}${x}`);
+    }
+
+    details.push({
+      status: ResultStatus.Fail,
+      message: message
+    });
+  } else {
+    details.push({
+      status: ResultStatus.Pass,
+      message: 'All container registries have replication enabled'
+    });
+  }
+
+  return {
+    checkId: 'DR-7',
+    status: details[0].status,
+    severity: Severity.Medium,
     details: details
   }
 }
