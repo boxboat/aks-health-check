@@ -153,8 +153,13 @@ async function checkAzure(options) {
   // Check development items
   console.log();
   console.log(chalk.bgWhite(chalk.black('               Scanning Development Items               ')));
+  results.push(Development.checkForAzureManagedPodIdentity(clusterDetails));
 
-  Development.checkForAzureManagedPodIdentity(clusterDetails);
+  // Check image management items
+  console.log();
+  console.log(chalk.bgWhite(chalk.black('               Scanning Image Management Items               ')));
+  results.push(ImageManagement.checkForPrivateEndpointsOnRegistries(containerRegistries));
+  results.push(await ImageManagement.checkForAksAcrRbacIntegration(clusterDetails, containerRegistries));
 
   // Check cluster setup items
   console.log();
@@ -166,16 +171,12 @@ async function checkAzure(options) {
   results.push(ClusterSetup.checkForAzurePolicy(clusterDetails));
   results.push(ClusterSetup.checkForAadRBAC(clusterDetails));
 
+  // Check disaster recovery items
   console.log();
   console.log(chalk.bgWhite(chalk.black('               Scanning Disaster Recovery Items               ')));
   results.push(DisasterRecovery.checkForAvailabilityZones(clusterDetails));
   results.push(DisasterRecovery.checkForControlPlaneSla(clusterDetails));
-
-  // Check image management items
-  console.log();
-  console.log(chalk.bgWhite(chalk.black('               Scanning Image Management Items               ')));
-  results.push(ImageManagement.checkForPrivateEndpointsOnRegistries(containerRegistries));
-  results.push(await ImageManagement.checkForAksAcrRbacIntegration(clusterDetails, containerRegistries));
+  results.push(await DisasterRecovery.checkForContainerRegistryReplication(containerRegistries));
 
   return results;
 }

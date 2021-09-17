@@ -154,7 +154,7 @@ There are about 50+ best-practice recommendations for Azure Kubernetes Service (
 | `DR-4`      | Manual    | Use Azure traffic manager for cross-region traffic |
 | `DR-5`      | Automated | Create a storage migration plan |
 | `DR-6`      | Automated | Guarantee SLA for the master control plane |
-| `DR-7`      | Manual    | Container registry has geo-replication |
+| `DR-7`      | Automated | Container registry has geo-replication |
 | `STOR-1`    | Manual    | Choose the right storage type |
 | `STOR-2`    | Manual    | Size nodes for storage needs |
 | `STOR-3`    | Manual    | Dynamically provision volumes when applicable |

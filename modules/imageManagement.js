@@ -108,6 +108,22 @@ export async function checkForAksAcrRbacIntegration(clusterDetails, containerReg
 
   let details = []
 
+  // If there are no container registries the test does not apply
+  if (!containerRegistries.length) {
+    details.push({
+      status: ResultStatus.NotApply,
+      message: "No registries were specified. Skipping check"
+    }
+    );
+
+    return {
+      checkId: 'IMG-5',
+      status: ResultStatus.NotApply,
+      severity: Severity.Medium,
+      details: details
+    }
+  }
+
   // Grab the kubelet identity from identity profile
   var identityProfile = clusterDetails.identityProfile;
   var kubeletIdentityObjectId = identityProfile && identityProfile.kubeletidentity.objectId;
@@ -202,7 +218,8 @@ export function checkForPrivateEndpointsOnRegistries(containerRegistries) {
     return {
       checkId: 'IMG-6',
       status: ResultStatus.NotApply,
-      severity: Severity.Medium
+      severity: Severity.Medium,
+      details: details
     }
   }
 
