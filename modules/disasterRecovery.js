@@ -163,8 +163,20 @@ export async function checkForContainerRegistryReplication(containerRegistries) 
       if (registryReplications.length <= 1)
         registriesWithoutReplication.push(registry.name);
     }
+
+    // If an error happens this abort the run
     catch (e) {
-      console.log(chalk.red(`--- An error occurred retrieving ACR replications: ${e}`));
+      details.push({
+        status: ResultStatus.Fail,
+        message: `An error occurred retrieving ACR replications: ${e}`
+      });
+  
+      return {
+        checkId: 'DR-7',
+        status: ResultStatus.Fail,
+        severity: Severity.Medium,
+        details: details
+      };
     }
   }
 
