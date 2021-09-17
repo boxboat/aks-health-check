@@ -1,6 +1,47 @@
 import chalk from "chalk"
 import { ResultStatus } from '../helpers/commandStatus.js';
 import { Severity } from '../helpers/commandSeverity.js';
+import { EOL } from 'os';
+
+const space = '            '
+
+//
+// Checks for network policies
+//
+export function checkForNetworkPolicies(networkPolicies) {
+
+  console.log(chalk.white("Checking for networking policies..."));
+
+  let details = []
+
+  // Log output
+  if (networkPolicies.items.length) {
+
+    let message = `Found ${networkPolicies.items.length} network policies`;
+
+    // Print out network policies for verbose logging
+    if (global.verbose) {
+      networkPolicies.items.forEach(x => message += `${EOL}${space}${x.metadata.namespace}/${x.metadata.name}`);
+    }
+
+    details.push({
+      status: ResultStatus.Pass,
+      message: message
+    });
+  } else {
+    details.push({
+      status: ResultStatus.Fail,
+      message: 'No network policies were found'
+    });
+  }
+
+  return {
+    checkId: 'NET-6',
+    status: details[0].status,
+    severity: Severity.Medium,
+    details: details
+  }
+}
 
 //
 // Checks for the existence of the most popular service meshes

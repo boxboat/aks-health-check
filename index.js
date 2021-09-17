@@ -229,6 +229,10 @@ async function checkKubernetes(options) {
   console.log(chalk.blue("Fetching all Pod Disruption Budgets..."));
   var pdbs = await getKubernetesJson('kubectl get pdb --all-namespaces', options);
 
+  // Fetch all the network policies
+  console.log(chalk.blue("Fetching all Network Policies..."));
+  var networkPolicies = await getKubernetesJson('kubectl get networkpolicy --all-namespaces', options);
+
   let results = [];
 
   // Check development items
@@ -268,6 +272,7 @@ async function checkKubernetes(options) {
   console.log();
   console.log(chalk.bgWhite(chalk.black('               Scanning Networking Items               ')));
   results.push(Networking.checkForServiceMesh(deployments, pods));
+  results.push(Networking.checkForNetworkPolicies(networkPolicies));
 
   return results;
 }

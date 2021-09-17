@@ -165,7 +165,7 @@ There are about 50+ best-practice recommendations for Azure Kubernetes Service (
 | `NET-3`     | Manual    | Distribute ingress traffic |
 | `NET-4`     | Manual    | Secure exposed endpoints with a Web Application Firewall (WAF) |
 | `NET-5`     | Manual    | Don’t expose ingress on public internet if not necessary |
-| `NET-6`     | Manual    | Control traffic flow with network policies |
+| `NET-6`     | Automated | Control traffic flow with network policies |
 | `NET-7`     | Manual    | Route egress traffic through a firewall |
 | `NET-8`     | Manual    | Do not expose worker nodes to public internet |
 | `NET-9`     | Automated | Utilize a service mesh (optional) |
