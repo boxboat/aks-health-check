@@ -11,6 +11,8 @@ There are many best-practices and some of these are subjective. So, we also have
 
 📢 [Blog Post](https://boxboat.com/2021/08/04/aks-health-check/)
 
+🎞️ [Hands on video](https://youtu.be/iQyBfon81uk)
+
 📄 [The Google Doc AKS Health Check Template](https://bit.ly/boxboat-health-check-report-template-v2) 📄
 
 ## Option A - Run with Current User (Preferred 🌟)
