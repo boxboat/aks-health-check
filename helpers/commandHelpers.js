@@ -33,13 +33,6 @@ export function executeCommand(command, timeoutInMs) {
 };
 
 //
-// Creates a kubernetes namespace if one doesn't exist
-//
-export async function safelyCreateKubeNamespace(namespaceName) {
-  await executeCommand(`kubectl create ns ${namespaceName} --dry-run -o yaml | kubectl apply -f -`);
-}
-
-//
 // Run a Kubernetes command with some CLI options
 //
 export async function getKubernetesJson(command, cliOptions) {
