@@ -1,8 +1,7 @@
 //
 // Imports
 //
-import { exec } from 'child_process';
-
+import { spawn } from 'child_process'
 //
 // Quick function that wraps a promise with a timeout
 //
@@ -14,15 +13,34 @@ const timeout = (prom, time, error) =>
 //
 export function executeCommand(command, timeoutInMs) {
   var commandPromise = new Promise((done, reject) => {
-    exec(command, {maxBuffer: 1024 * 1024 * 10}, (err, stdout, stderr) => {
+    var commandArray = command.split(' ');
+    var justCommand = commandArray[0];
+    var args = commandArray.slice(1);
+    var child = spawn(justCommand, args);
 
-      if (err)
-        reject(err);
+    var stdout = "";
+    var stderr = "";
 
-      done({
-        stdout: stdout,
-        stderr: stderr
-      });
+    child.stdout.on('data', function (data) {
+      stdout += data;
+    });
+
+    child.stderr.on('data', function (data) {
+      stderr += data;
+    });
+
+    child.on('close', function (code) {
+      if (code === 0) {
+        done({
+          stdout: stdout,
+          stderr: stderr
+        });
+      } else {
+        reject({
+          stdout: stdout,
+          stderr: stderr
+        });
+      }
     });
   });
 
