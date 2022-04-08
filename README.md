@@ -28,6 +28,10 @@ It checks for configuration in the Azure plane. It also checks for configuration
   - `aks-hc check all` - Checks both Azure and Kubernetes configuration
   - `aks-hc help` - Get some help
 
+
+![2022-04-08_16-55-39](https://user-images.githubusercontent.com/1071270/162529465-91e60d6d-0ea2-4730-81a5-a9837cfe069c.png)
+
+
 ### Note about Private Clusters 👀
 
 If your machine cannot reach the Kubernetes API endpoint in the private AKS cluster, then you will only be able to perform Azure checks (`aks-hc check azure`). To perform Kubernetes checks, you will have to use a bastion machine or be connected to the private network where the private cluster is deployed.
