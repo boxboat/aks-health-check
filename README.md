@@ -17,20 +17,7 @@ There are many best-practices and some of these are subjective. So, we also have
 
 ## Overview
 
-This health check companion tool is a NodeJS application that uses both the Azure and Kubernetes CLI to interact with Azure and Kubernetes appropiately. 
-It checks for configuration in the Azure plane. It also checks for configuration in the Kubernetes plane. 
-
-1. You start a Docker container and login to Azure from it
-2. You connect to Kubernetes
-3. You perform one of the following
-  - `aks-hc check azure` - Checks only Azure configuration
-  - `aks-hc check kubernetes` - Checks only Kubernetes configuration
-  - `aks-hc check all` - Checks both Azure and Kubernetes configuration
-  - `aks-hc help` - Get some help
-
-
-![2022-04-08_16-55-39](https://user-images.githubusercontent.com/1071270/162529465-91e60d6d-0ea2-4730-81a5-a9837cfe069c.png)
-
+![carbon (5)](https://user-images.githubusercontent.com/1071270/162533343-ccba3412-b0cd-4d3c-8cf7-0f579c6054b0.png)
 
 ### Note about Private Clusters 👀
 
@@ -53,15 +40,18 @@ $ az aks get-credentials -g <resource group> -n <cluster name>
 # Verify that you can interact with Kubernets 
 $ kubectl get ns
 
-# check all - checks both Azure and Kubernetes configuration
-# check kubernetes - checks only Kubernetes
-# check azure - checks only Azure
+# aks-hc check all - checks both Azure and Kubernetes configuration
+# aks-hc check kubernetes - checks only Kubernetes
+# aks-hc check azure - checks only Azure
+# aks-hc help - get some help
 $ aks-hc check all -g <resource group> -n <cluster name> -i ingress-nginx,kube-node-lease,kube-public,kube-system
 
-$ exit
+# Receive the results
+
+$ exit # Leave the container
 ```
 
-### Optional - Azure Container Registry
+### Optional - Check the Azure Container Registry
 
 If you use Azure Container Registry (ACR), you can have this health check review some basic configuration. If will not inspect container images pushed to the registry. 
 
