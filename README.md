@@ -207,3 +207,24 @@ az set -s <subscription id>
 az aks get-credentials -n <cluster name> -g <resource group> --admin
 npm start -- check azure -g <cluster resource group> -n <cluster name>
 ```
+
+### Running against Kind
+
+``` bash
+docker build --network host -t aks-health-check .
+
+kind create cluster
+kubectl cluster-info --context kind-kind
+
+# verify that you can talk to the local kind cluster
+kubectl get ns
+
+# run aks health check for only Kubernetes and mount the local kube config file
+docker run -it --network host --rm -v ~/.kube/config:/home/boxboat/.kube/config aks-health-check
+
+# verify that you can talk to the local kind cluster
+$ kubectl get ns
+
+$ aks-hc check kubernetes -i ingress-nginx,kube-node-lease,kube-public,kube-system
+
+```
