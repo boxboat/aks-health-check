@@ -191,7 +191,7 @@ export function checkForAzurePolicy(clusterDetails) {
   let details = [];
 
   // Check if Azure policy is enabled
-  var azurePolicy = clusterDetails.addonProfiles.azurepolicy;
+  var azurePolicy = clusterDetails.addonProfiles?.azurepolicy;
   var azurePolicyConfigured = azurePolicy && azurePolicy.enabled;
 
   // Log output
