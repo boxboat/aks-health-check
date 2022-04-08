@@ -15,7 +15,26 @@ There are many best-practices and some of these are subjective. So, we also have
 
 📄 [The Google Doc AKS Health Check Template](https://bit.ly/boxboat-health-check-report-template-v2) 📄
 
-## Option A - Run with Current User (Preferred 🌟)
+## Overview
+
+This health check companion tool is a NodeJS application that uses both the Azure and Kubernetes CLI to interact with Azure and Kubernetes appropiately. 
+It checks for configuration in the Azure plane. It also checks for configuration in the Kubernetes plane. 
+
+1. You start a Docker container and login to Azure from it
+2. You connect to Kubernetes
+3. You perform one of the following
+  - `aks-hc check azure` - Checks only Azure configuration
+  - `aks-hc check kubernetes` - Checks only Kubernetes configuration
+  - `aks-hc check all` - Checks both Azure and Kubernetes configuration
+  - `aks-hc help` - Get some help
+
+### Note about Private Clusters 👀
+
+If your machine cannot reach the Kubernetes API endpoint in the private AKS cluster, then you will only be able to perform Azure checks (`aks-hc check azure`). To perform Kubernetes checks, you will have to use a bastion machine or be connected to the private network where the private cluster is deployed.
+
+## Option A - Run with Current User (Preferred 🌟) 
+
+Whoever is performing the health check, has to be able to use Docker and be a cluster administrator.
 
 ``` bash
 docker run -it --network host --rm ghcr.io/boxboat/aks-health-check
@@ -25,10 +44,14 @@ $ az login
 
 $ az account set -s <subscription id>
 
-$ az aks get-credentials -g <resource group> -n <cluster name> --admin
+$ az aks get-credentials -g <resource group> -n <cluster name>
 
+# Verify that you can interact with Kubernets 
 $ kubectl get ns
 
+# check all - checks both Azure and Kubernetes configuration
+# check kubernetes - checks only Kubernetes
+# check azure - checks only Azure
 $ aks-hc check all -g <resource group> -n <cluster name> -i ingress-nginx,kube-node-lease,kube-public,kube-system
 
 $ exit
@@ -48,7 +71,7 @@ foo2
 $ aks-hc check all -g <resource group> -n <cluster name> -i ingress-nginx,kube-node-lease,kube-public,kube-system --image-registries "foo1,foo2"
 ```
 
-## Option B - Run with Azure Service Principal
+## Option B - Run with Managed Identity
 
 This option walks you through running the health check using an Azure Managed Identity so that it can be tied to a "service principal". Essentially, it avoids impersoning a user or running with someone's identity.
 
