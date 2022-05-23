@@ -15,7 +15,17 @@ There are many best-practices and some of these are subjective. So, we also have
 
 📄 [The Google Doc AKS Health Check Template](https://bit.ly/boxboat-health-check-report-template-v2) 📄
 
-## Option A - Run with Current User (Preferred 🌟)
+## Overview
+
+![carbon (5)](https://user-images.githubusercontent.com/1071270/162533343-ccba3412-b0cd-4d3c-8cf7-0f579c6054b0.png)
+
+### Note about Private Clusters 👀
+
+If your machine cannot reach the Kubernetes API endpoint in the private AKS cluster, then you will only be able to perform Azure checks (`aks-hc check azure`). To perform Kubernetes checks, you will have to use a bastion machine or be connected to the private network where the private cluster is deployed.
+
+## Option A - Run with Current User (Preferred 🌟) 
+
+Whoever is performing the health check, has to be able to use Docker and be a cluster administrator.
 
 ``` bash
 docker run -it --network host --rm ghcr.io/boxboat/aks-health-check
@@ -25,16 +35,23 @@ $ az login
 
 $ az account set -s <subscription id>
 
-$ az aks get-credentials -g <resource group> -n <cluster name> --admin
+$ az aks get-credentials -g <resource group> -n <cluster name>
 
+# Verify that you can interact with Kubernets 
 $ kubectl get ns
 
+# aks-hc check all - checks both Azure and Kubernetes configuration
+# aks-hc check kubernetes - checks only Kubernetes
+# aks-hc check azure - checks only Azure
+# aks-hc help - get some help
 $ aks-hc check all -g <resource group> -n <cluster name> -i ingress-nginx,kube-node-lease,kube-public,kube-system
 
-$ exit
+# Receive the results
+
+$ exit # Leave the container
 ```
 
-### Optional - Azure Container Registry
+### Optional - Check the Azure Container Registry
 
 If you use Azure Container Registry (ACR), you can have this health check review some basic configuration. If will not inspect container images pushed to the registry. 
 
@@ -48,7 +65,7 @@ foo2
 $ aks-hc check all -g <resource group> -n <cluster name> -i ingress-nginx,kube-node-lease,kube-public,kube-system --image-registries "foo1,foo2"
 ```
 
-## Option B - Run with Azure Service Principal
+## Option B - Run with Managed Identity
 
 This option walks you through running the health check using an Azure Managed Identity so that it can be tied to a "service principal". Essentially, it avoids impersoning a user or running with someone's identity.
 
