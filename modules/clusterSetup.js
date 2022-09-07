@@ -13,9 +13,8 @@ export function checkForAuthorizedIpRanges(clusterDetails) {
 
   try {
     // Check if authorized ip ranges is non-null
-    var authorizedIpRangesConfigured = (clusterDetails
-      .apiServerAccessProfile
-      .authorizedIpRanges || []).length > 0;
+    var authorizedIpRanges = clusterDetails.apiServerAccessProfile ? clusterDetails.apiServerAccessProfile.authorizedIpRanges : [];
+    var authorizedIpRangesConfigured = authorizedIpRanges.length > 0;
 
     // Log output
     if (!authorizedIpRangesConfigured) {

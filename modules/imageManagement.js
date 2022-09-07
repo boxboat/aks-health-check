@@ -158,7 +158,7 @@ export async function checkForAksAcrRbacIntegration(clusterDetails, containerReg
   }
 
   // Grab the roles for the identity
-  var commandResults = await executeCommand(`az role assignment list --assignee '${kubeletIdentityObjectId}' --all`);
+  var commandResults = await executeCommand(`az role assignment list --assignee ${kubeletIdentityObjectId} --all`);
   var assignedRoles = JSON.parse(commandResults.stdout);
 
   // Build up the list of registries that do not have the AcrPull role defined for the kubelet identity

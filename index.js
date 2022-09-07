@@ -11,7 +11,6 @@ import * as ImageManagement from './modules/imageManagement.js';
 import * as ClusterSetup from './modules/clusterSetup.js';
 import * as DisasterRecovery from './modules/disasterRecovery.js';
 import * as Networking from './modules/networking.js';
-import { equalsIgnoreCase } from './helpers/stringCompare.js';
 import * as fs from 'fs';
 import { ResultStatus } from './helpers/commandStatus.js';
 import { Severity } from './helpers/commandSeverity.js';
@@ -43,15 +42,15 @@ function showTableFromResults(results) {
   let rawData = fs.readFileSync('./checks-definition.json');
   const checkDefinitions = JSON.parse(rawData);
 
-  let prettyResults = checkDefinitions.map((check)=> {
+  let prettyResults = checkDefinitions.map((check) => {
 
     var result = results.find(x => x.checkId == check.checkId);
     return {
       CheckId: check.checkId,
-      Status: result? result.status: ResultStatus.NeedsManualInspection,
-      Severity: result? result.severity: Severity.Unknown,
+      Status: result ? result.status : ResultStatus.NeedsManualInspection,
+      Severity: result ? result.severity : Severity.Unknown,
       Description: check.description,
-      Details: result? result.details: []
+      Details: result ? result.details : []
     }
   });
 
@@ -59,7 +58,7 @@ function showTableFromResults(results) {
   let resultsThatFailedCount = prettyResults.filter(result => result.Status == ResultStatus.Fail).length
   let resultsThatPassedCount = prettyResults.filter(result => result.Status == ResultStatus.Pass).length
   let manualChecksCount = prettyResults.filter(result => result.Status == ResultStatus.NeedsManualInspection).length
-  let score = Math.round((resultsThatPassedCount/resultsRanCount)*100)
+  let score = Math.round((resultsThatPassedCount / resultsRanCount) * 100)
 
   console.log();
   console.log(chalk.bgBlueBright('                                                              '));
@@ -78,9 +77,9 @@ function showTableFromResults(results) {
 
   for (let i = 0; i < prettyResults.length; i++) {
     const result = prettyResults[i];
-    
+
     let msgBody = `| ${result.Status} - ${result.Description}`
-    switch (result.Status){
+    switch (result.Status) {
       case ResultStatus.Pass:
         console.log(`${i + 1}. ${chalk.bgGreen.white.bold(result.CheckId)} ${msgBody}`);
         break;
@@ -96,11 +95,11 @@ function showTableFromResults(results) {
     }
 
     // Additional details that are nested
-    if (result.Details){
+    if (result.Details) {
       for (let j = 0; j < result.Details.length; j++) {
-        
+
         let nestedMsgTemplate = `    +------ ${result.Details[j].message}`;
-        switch (result.Status){
+        switch (result.Status) {
           case ResultStatus.Pass:
             console.log(chalk.green(nestedMsgTemplate));
             break;
@@ -128,9 +127,6 @@ async function checkAzure(options) {
   else if (options.dryRun === true) console.log('Dry run coming soon. (mode: fail)');
   else console.log(`Dry run coming soon. (mode: ${options.dryRun})`);
 
-  // Parse container registries
-  var registriesArr = options.imageRegistries ? options.imageRegistries.split(',') : [];
-
   // Begin pulling data
   console.log(chalk.bgWhite(chalk.black('               Downloading Infrastructure Data               ')));
 
@@ -140,14 +136,9 @@ async function checkAzure(options) {
   var clusterDetails = JSON.parse(commandResults.stdout);
 
   // Get container registries
-  var containerRegistries = [];
-  if (registriesArr.length) {
-    console.log(chalk.blue("Fetching Azure Container Registry information..."));
-    var commandResults = await executeCommand(`az acr list`);
-    containerRegistries = JSON.parse(commandResults.stdout);
-    containerRegistries = containerRegistries.filter(x => registriesArr.some(y => equalsIgnoreCase(y, x.name)));
-  }
+  var containerRegistries = await fetchContainerRegistries(options);
 
+  // Initialize results
   let results = [];
 
   // Check development items
@@ -286,10 +277,48 @@ function setupGlobals(options) {
 }
 
 //
+// Fetch container registries
+//
+async function fetchContainerRegistries(options) {
+
+  // Verify there are registries to pull
+  var registryNames = options.imageRegistries ? options.imageRegistries.split(',') : [];
+  if (!registryNames.length)
+    return [];
+
+  // Log that we're fetching registry information
+  console.log(chalk.blue("Fetching Azure Container Registry information..."));
+
+  // Pull each registry
+  var containerRegistries = [];
+  for (var registryName of registryNames) {
+
+    // Determine the registry subscription
+    var registrySub = '';
+    var splitName = registryName.split(':');
+    if (splitName.length > 1) {
+      registrySub = splitName[0];
+      registryName = splitName[1];
+    }
+
+    // Build up the command
+    var command = `az acr show -n ${registryName}`;
+    if (registrySub)
+      command += ` --subscription ${registrySub}`;
+
+    // Execute command and append results to our container registries array
+    var commandResults = await executeCommand(command);
+    containerRegistries.push(JSON.parse(commandResults.stdout));
+  }
+
+  return containerRegistries;
+}
+
+//
 // Main function
 //
 async function main(options) {
-  var results = await checkAzure(options);  
+  var results = await checkAzure(options);
   return results.concat(await checkKubernetes(options));
 }
 
@@ -320,7 +349,7 @@ check
 
 check
   .command('kubernetes')
-  .option('-r, --image-registries <registries>', 'A comma-separated list of Azure Container Registry names used with the cluster')
+  .option('-r, --image-registries <registries>', 'A comma-separated list of Azure Container Registry names used with the cluster (can be of the format <subscription id>:<registry name> for registries in separate subscriptions')
   .option('--dry-run [mode]', "Dry run with mode 'fail' or 'pass'. Defaults to 'fail'. Do not actually perform the checks, just observe results.")
   .option('-i, --ignore-namespaces <namespaces>', 'A comma-separated list of namespaces to ignore when doing analysis')
   .option('-v, --verbose', 'Enable verbose console logging')
@@ -333,7 +362,7 @@ check
   .command('all', { isDefault: true })
   .requiredOption('-g, --resource-group <group>', 'Resource group of AKS cluster')
   .requiredOption('-n, --name <name>', 'Name of AKS cluster')
-  .option('-r, --image-registries <registries>', 'A comma-separated list of Azure Container Registry names used with the cluster')
+  .option('-r, --image-registries <registries>', 'A comma-separated list of Azure Container Registry names used with the cluster (can be of the format <subscription id>:<registry name> for registries in separate subscriptions')
   .option('--dry-run [mode]', "Dry run with mode 'fail' or 'pass'. Defaults to 'fail'. Do not actually perform the checks, just observe results.")
   .option('-i, --ignore-namespaces <namespaces>', 'A comma-separated list of namespaces to ignore when doing analysis')
   .option('-v, --verbose', 'Enable verbose console logging')
