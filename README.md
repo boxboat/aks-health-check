@@ -55,7 +55,7 @@ $ exit # Leave the container
 
 If you use Azure Container Registry (ACR), you can have this health check review some basic configuration. If will not inspect container images pushed to the registry. 
 
-To do this, look at the container registries available then specify the `--image-registries` option. If the container registry is in a separate subscription than the AKS cluster, you may use the format '<subscription id>:<registry name>' to specify the subscription.
+To do this, look at the container registries available then specify the `--image-registries` option. If the container registry is in a separate subscription than the AKS cluster, you may use the format '{subscription id}:{registry name}' to specify the subscription (ie: 1234-56-7890:myregistry).
 
 ``` bash
 $ az acr list --query "[].name"
