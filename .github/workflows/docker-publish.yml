@@ -43,11 +43,23 @@ jobs:
       - uses: actions/setup-go@v1
         with:
           go-version: '1.13'
-      - name: Snyk monitor
-        run: snyk test
-        env:
-          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
-
+      - name: Build an image from Dockerfile
+        run: |
+          docker build -t docker.io/boxboat/aks-health-check:${{ github.sha }} .
+      - name: Run Trivy vulnerability scanner
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: 'docker.io/boxboat/aks-health-check:${{ github.sha }}'
+          format: 'sarif'
+          output: 'trivy-results.sarif'
+          vuln-type: 'os,library'
+          security: 'CRITICAL,HIGH'
+          ignore-unfixed: true
+      - name: Upload Trivy scan results to GitHub Security tab
+        uses: github/codeql-action/upload-sarif@v2
+        if: always()
+        with:
+          sarif_file: 'trivy-results.sarif'
   # Push image to GitHub Packages.
   # See also https://docs.docker.com/docker-hub/builds/
   push:
