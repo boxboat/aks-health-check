@@ -1,47 +1,72 @@
 package test
 
 import (
+	"fmt"
+	"os"
 	"testing"
 
+	"github.com/gruntwork-io/terratest/modules/docker"
 	"github.com/gruntwork-io/terratest/modules/terraform"
-	"github.com/stretchr/testify/assert"
+	"gotest.tools/v3/assert"
+
+	test_structure "github.com/gruntwork-io/terratest/modules/test-structure"
 )
 
 // An example of how to test the simple Terraform module in examples/terraform-basic-example using Terratest.
-func TestTerraformBasicExample(t *testing.T) {
+func TestSimpleCluster(t *testing.T) {
 	t.Parallel()
 
-	expectedText := "test"
-	expectedList := []string{expectedText}
-	expectedMap := map[string]string{"expected": expectedText}
+	tempFolder := test_structure.CopyTerraformFolderToTemp(t, "../", "test-runs/simple-cluster")
 
-	terraformOptions := terraform.WithDefaultRetryableErrors(t, &terraform.Options{
-		// website::tag::1::Set the path to the Terraform code that will be tested.
-		// The path to where our Terraform code is located
-		TerraformDir: "scenario/simple-cluster",
+	test_structure.RunTestStage(t, "arrange", func() {
+		terraformOptions := terraform.WithDefaultRetryableErrors(t, &terraform.Options{
+			// The path to where our Terraform code is located
+			TerraformDir: "scenario/simple-cluster",
 
-		// Disable colors in Terraform commands so its easier to parse stdout/stderr
-		NoColor: true,
+			// Disable colors in Terraform commands so its easier to parse stdout/stderr
+			NoColor: true,
+		})
+		test_structure.SaveTerraformOptions(t, tempFolder, terraformOptions)
+
+		// This will run `terraform init` and `terraform apply` and fail the test if there are any errors
+		terraform.InitAndApply(t, terraformOptions)
+
+		WriteKubeConfigFile(tempFolder, terraform.Output(t, terraformOptions, "kube_config"))
 	})
 
-	// website::tag::4::Clean up resources with "terraform destroy". Using "defer" runs the command at the end of the test, whether the test succeeds or fails.
-	// At the end of the test, run `terraform destroy` to clean up any resources that were created
-	defer terraform.Destroy(t, terraformOptions)
+	test_structure.RunTestStage(t, "act", func() {
 
-	// website::tag::2::Run "terraform init" and "terraform apply".
-	// This will run `terraform init` and `terraform apply` and fail the test if there are any errors
-	terraform.InitAndApply(t, terraformOptions)
+		tag := "boxboat/aks-health-check:terragrunt"
+		buildOptions := &docker.BuildOptions{
+			Tags: []string{tag},
+		}
+		docker.Build(t, "..", buildOptions)
 
-	// Run `terraform output` to get the values of output variables
-	actualTextExample := terraform.Output(t, terraformOptions, "example")
-	actualTextExample2 := terraform.Output(t, terraformOptions, "example2")
-	actualExampleList := terraform.OutputList(t, terraformOptions, "example_list")
-	actualExampleMap := terraform.OutputMap(t, terraformOptions, "example_map")
+		opts := &docker.RunOptions{
+			Volumes: []string{
+				tempFolder + "/kubeconfig:/home/boxboat/.kube/config",
+			},
+			Command: []string{"aks-hc", "check", "kubernetes"},
+		}
+		output := docker.Run(t, tag, opts)
 
-	// website::tag::3::Check the output against expected values.
-	// Verify we're getting back the outputs we expect
-	assert.Equal(t, expectedText, actualTextExample)
-	assert.Equal(t, expectedText, actualTextExample2)
-	assert.Equal(t, expectedList, actualExampleList)
-	assert.Equal(t, expectedMap, actualExampleMap)
+		test_structure.SaveString(t, tempFolder, "output", output)
+	})
+
+	test_structure.RunTestStage(t, "assert", func() {
+		output := test_structure.LoadString(t, tempFolder, "output")
+		assert.Equal(t, "Hello, World!", output)
+	})
+
+	defer test_structure.RunTestStage(t, "teardown", func() {
+		terraformOptions := test_structure.LoadTerraformOptions(t, tempFolder)
+		terraform.Destroy(t, terraformOptions)
+	})
+}
+
+func WriteKubeConfigFile(tempFolder string, kubeconfig string) {
+	err := os.WriteFile(tempFolder+"/kubeconfig", []byte(kubeconfig), 0755)
+	if err != nil {
+		fmt.Printf("Unable to write file: %v", err)
+	}
 }
