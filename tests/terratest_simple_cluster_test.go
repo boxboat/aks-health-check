@@ -3,11 +3,13 @@ package test
 import (
 	"fmt"
 	"os"
+	"path/filepath"
 	"testing"
 
+	"github.com/google/martian/v3/log"
 	"github.com/gruntwork-io/terratest/modules/docker"
 	"github.com/gruntwork-io/terratest/modules/terraform"
-	"gotest.tools/v3/assert"
+	"github.com/stretchr/testify/assert"
 
 	test_structure "github.com/gruntwork-io/terratest/modules/test-structure"
 )
@@ -42,12 +44,18 @@ func TestSimpleCluster(t *testing.T) {
 		}
 		docker.Build(t, "..", buildOptions)
 
+		kubeconfigpath := tempFolder + "/kubeconfig"
+		absoluateKubeConfig, err := filepath.Abs(kubeconfigpath)
+		if err != nil {
+			log.Errorf("Unable to get absolute path for kubeconfig: %v", err)
+		}
 		opts := &docker.RunOptions{
 			Volumes: []string{
-				tempFolder + "/kubeconfig:/home/boxboat/.kube/config",
+				absoluateKubeConfig + ":/home/boxboat/.kube/config",
 			},
 			Command: []string{"aks-hc", "check", "kubernetes"},
 		}
+		log.Infof("Running docker image with temp folder %s", tempFolder)
 		output := docker.Run(t, tag, opts)
 
 		test_structure.SaveString(t, tempFolder, "output", output)
@@ -55,7 +63,7 @@ func TestSimpleCluster(t *testing.T) {
 
 	test_structure.RunTestStage(t, "assert", func() {
 		output := test_structure.LoadString(t, tempFolder, "output")
-		assert.Equal(t, "Hello, World!", output)
+		assert.Contains(t, output, "DEV-1")
 	})
 
 	defer test_structure.RunTestStage(t, "teardown", func() {
