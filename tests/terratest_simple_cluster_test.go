@@ -18,7 +18,7 @@ import (
 func TestSimpleCluster(t *testing.T) {
 	t.Parallel()
 
-	tempFolder := test_structure.CopyTerraformFolderToTemp(t, "../", "test-runs/simple-cluster")
+	tempFolder := test_structure.CopyTerraformFolderToTemp(t, "../", "scenario/simple-cluster")
 
 	test_structure.RunTestStage(t, "arrange", func() {
 		terraformOptions := terraform.WithDefaultRetryableErrors(t, &terraform.Options{
