@@ -20,6 +20,11 @@ func TestSimpleCluster(t *testing.T) {
 
 	tempFolder := test_structure.CopyTerraformFolderToTemp(t, ".", "scenario/simple-cluster")
 
+	defer test_structure.RunTestStage(t, "teardown", func() {
+		terraformOptions := test_structure.LoadTerraformOptions(t, tempFolder)
+		terraform.Destroy(t, terraformOptions)
+	})
+
 	test_structure.RunTestStage(t, "arrange", func() {
 		terraformOptions := terraform.WithDefaultRetryableErrors(t, &terraform.Options{
 			// The path to where our Terraform code is located
@@ -64,11 +69,6 @@ func TestSimpleCluster(t *testing.T) {
 	test_structure.RunTestStage(t, "assert", func() {
 		output := test_structure.LoadString(t, tempFolder, "output")
 		assert.Contains(t, output, "DEV-1")
-	})
-
-	defer test_structure.RunTestStage(t, "teardown", func() {
-		terraformOptions := test_structure.LoadTerraformOptions(t, tempFolder)
-		terraform.Destroy(t, terraformOptions)
 	})
 }
 
