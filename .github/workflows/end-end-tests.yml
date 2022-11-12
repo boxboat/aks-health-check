@@ -16,6 +16,11 @@ jobs:
     defaults:
       run:
         working-directory: ./tests
+    env:
+      ARM_CLIENT_ID: ${{ secrets.TERRATEST_CLIENT_ID }}
+      ARM_CLIENT_SECRET: ${{ secrets.TERRATEST_CLIENT_SECRET }}
+      ARM_SUBSCRIPTION_ID: ${{ secrets.TERRATEST_SUBSCRIPTION_ID }}
+      ARM_TENANT_ID: ${{ secrets.TERRATEST_TENANT_ID }}
     steps:
     - uses: actions/checkout@v3
 
@@ -24,9 +29,9 @@ jobs:
       with:
         go-version: 1.18
     
-    - uses: azure/login@v1
-      with:
-        creds: '{"clientId":"${{ secrets.TERRATEST_CLIENT_ID }}","clientSecret":"${{ secrets.TERRATEST_CLIENT_SECRET }}","subscriptionId":"${{ secrets.TERRATEST_SUBSCRIPTION_ID }}","tenantId":"${{ secrets.TERRATEST_TENANT_ID }}"}'
+    # - uses: azure/login@v1
+    #   with:
+    #     creds: '{"clientId":"${{ secrets.TERRATEST_CLIENT_ID }}","clientSecret":"${{ secrets.TERRATEST_CLIENT_SECRET }}","subscriptionId":"${{ secrets.TERRATEST_SUBSCRIPTION_ID }}","tenantId":"${{ secrets.TERRATEST_TENANT_ID }}"}'
 
     - name: Build
       run: go build -v ./...
