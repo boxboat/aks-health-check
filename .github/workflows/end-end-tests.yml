@@ -34,7 +34,7 @@ jobs:
     #     creds: '{"clientId":"${{ secrets.TERRATEST_CLIENT_ID }}","clientSecret":"${{ secrets.TERRATEST_CLIENT_SECRET }}","subscriptionId":"${{ secrets.TERRATEST_SUBSCRIPTION_ID }}","tenantId":"${{ secrets.TERRATEST_TENANT_ID }}"}'
 
     - name: Build
-      run: go build -v ./...
+      run: go build -v 
 
     - name: Test
-      run: go test -v ./...
+      run: go test -v -timeout 30m
