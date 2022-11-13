@@ -51,7 +51,7 @@ func TestSimpleCluster(t *testing.T) {
 
 func WriteKubeConfigFile(tempFolder string, kubeconfig string) {
 	log.Infof("Writing kubeconfig to %s", tempFolder)
-	err := os.WriteFile(tempFolder+"/kubeconfig", []byte(kubeconfig), 0755)
+	err := os.WriteFile(tempFolder+"/.test-data/kubeconfig", []byte(kubeconfig), 0755)
 	if err != nil {
 		fmt.Printf("Unable to write file: %v", err)
 	}
