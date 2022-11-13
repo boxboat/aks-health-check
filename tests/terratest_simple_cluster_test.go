@@ -8,6 +8,7 @@ import (
 
 	"github.com/google/martian/v3/log"
 	"github.com/gruntwork-io/terratest/modules/docker"
+	"github.com/gruntwork-io/terratest/modules/random"
 	"github.com/gruntwork-io/terratest/modules/terraform"
 	"github.com/stretchr/testify/assert"
 
@@ -26,13 +27,7 @@ func TestSimpleCluster(t *testing.T) {
 	})
 
 	test_structure.RunTestStage(t, "arrange", func() {
-		terraformOptions := terraform.WithDefaultRetryableErrors(t, &terraform.Options{
-			// The path to where our Terraform code is located
-			TerraformDir: "scenario/simple-cluster",
-
-			// Disable colors in Terraform commands so its easier to parse stdout/stderr
-			NoColor: true,
-		})
+		terraformOptions := NewTerraformOptions(t)
 		test_structure.SaveTerraformOptions(t, tempFolder, terraformOptions)
 
 		// This will run `terraform init` and `terraform apply` and fail the test if there are any errors
@@ -42,26 +37,8 @@ func TestSimpleCluster(t *testing.T) {
 	})
 
 	test_structure.RunTestStage(t, "act", func() {
-
-		tag := "boxboat/aks-health-check:terragrunt"
-		buildOptions := &docker.BuildOptions{
-			Tags: []string{tag},
-		}
-		docker.Build(t, "..", buildOptions)
-
-		kubeconfigpath := tempFolder + "/kubeconfig"
-		absoluateKubeConfig, err := filepath.Abs(kubeconfigpath)
-		if err != nil {
-			log.Errorf("Unable to get absolute path for kubeconfig: %v", err)
-		}
-		opts := &docker.RunOptions{
-			Volumes: []string{
-				absoluateKubeConfig + ":/home/boxboat/.kube/config",
-			},
-			Command: []string{"aks-hc", "check", "kubernetes"},
-		}
-		log.Infof("Running docker image with temp folder %s", tempFolder)
-		output := docker.Run(t, tag, opts)
+		// Run the health check from a Docker image
+		output := DockerBuildNRun(t, tempFolder, []string{"aks-hc", "check", "kubernetes"})
 
 		test_structure.SaveString(t, tempFolder, "output", output)
 	})
@@ -73,8 +50,54 @@ func TestSimpleCluster(t *testing.T) {
 }
 
 func WriteKubeConfigFile(tempFolder string, kubeconfig string) {
+	log.Infof("Writing kubeconfig to %s", tempFolder)
 	err := os.WriteFile(tempFolder+"/kubeconfig", []byte(kubeconfig), 0755)
 	if err != nil {
 		fmt.Printf("Unable to write file: %v", err)
 	}
+}
+
+func DockerBuildNRun(t *testing.T, tempFolder string, command []string) string {
+	tag := "boxboat/aks-health-check:terratest"
+	buildOptions := &docker.BuildOptions{
+		Tags: []string{tag},
+	}
+	docker.Build(t, "..", buildOptions)
+
+	kubeconfigpath := tempFolder + "/.test-data/kubeconfig"
+	absoluteKubeConfig, err := filepath.Abs(kubeconfigpath)
+	if err != nil {
+		log.Errorf("Unable to get absolute path for kubeconfig: %v", err)
+	}
+	opts := &docker.RunOptions{
+		Volumes: []string{
+			absoluteKubeConfig + ":/home/boxboat/.kube/config",
+		},
+		Command: command,
+	}
+	log.Infof("Running docker image with temp folder %s", tempFolder)
+	return docker.Run(t, tag, opts)
+}
+
+func NewTerraformOptions(t *testing.T) *terraform.Options {
+
+	uniqueID := random.UniqueId()
+
+	resourceGroupName := "rg-terratest-simple-cluster-" + uniqueID
+
+	clusterName := "aks-terratest-simple-cluster-" + uniqueID
+
+	return terraform.WithDefaultRetryableErrors(t, &terraform.Options{
+		// The path to where our Terraform code is located
+		TerraformDir: "scenario/simple-cluster",
+
+		// Disable colors in Terraform commands so its easier to parse stdout/stderr
+		NoColor: true,
+
+		Vars: map[string]interface{}{
+			"resource_group_name": resourceGroupName,
+			"location":            "eastus",
+			"cluster_name":        clusterName,
+		},
+	})
 }

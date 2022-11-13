@@ -160,3 +160,4 @@ terraform.rc
 # Go workspace file
 go.work
 test-runs/
+tests/scenario/**/.test-data/
