@@ -37,7 +37,7 @@ $ az account set -s <subscription id>
 
 $ az aks get-credentials -g <resource group> -n <cluster name>
 
-# Verify that you can interact with Kubernets 
+# Verify that you can interact with Kubernetes 
 $ kubectl get ns
 
 # aks-hc check all - checks both Azure and Kubernetes configuration
@@ -53,7 +53,7 @@ $ exit # Leave the container
 
 ### Optional - Check the Azure Container Registry
 
-If you use Azure Container Registry (ACR), you can have this health check review some basic configuration. If will not inspect container images pushed to the registry. 
+If you use Azure Container Registry (ACR), you can have this health check review some basic configuration. It will not inspect container images pushed to the registry. 
 
 To do this, look at the container registries available then specify the `--image-registries` option. If the container registry is in a separate subscription than the AKS cluster, you may use the format '{subscription id}:{registry name}' to specify the subscription (ie: 1234-56-7890:myregistry).
 
@@ -213,7 +213,7 @@ Through practice, we decided to create a Google Doc for the report instead. This
 
 First, `npm install`.
 
-In VS Code, open the command patellete, then select **Debug: Toggle Auto-Attach** so that any new NodeJS application will attach the VS Code debugger.
+In VS Code, open the command palette, then select **Debug: Toggle Auto-Attach** so that any new NodeJS application will attach the VS Code debugger.
 Select the "Smart" mode.
 
 Then, from the VS Code terminal, invoke the CLI tool by running it against a cluster.
